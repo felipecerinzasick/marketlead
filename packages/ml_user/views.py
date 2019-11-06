@@ -12,7 +12,7 @@ from .forms import EmailLoginForm
 
 def login(request):
     if request.user.is_authenticated:
-        return redirect("profile_details")
+        return redirect("/")
     else:
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -31,5 +31,5 @@ def login(request):
                 template_name="users/login.html",
                 redirect_field_name=redirect_field_name,
                 authentication_form=EmailLoginForm,
-                form_class = EmailLoginForm
+                form_class=EmailLoginForm
             )(request)

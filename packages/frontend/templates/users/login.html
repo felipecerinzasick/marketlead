@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+
+{% block main_body %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-warning">
+            <i class="fab fa-facebook-f"></i>
+            <span>Submit</span>
+        </button>
+    </form>
+{% endblock %}
