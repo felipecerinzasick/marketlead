@@ -4,6 +4,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
     <title>Market Lead</title>
 
     {% if base_settings.debug %}
@@ -14,6 +16,9 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
     {% endif %}
 
+    <link rel="stylesheet" href="{% static 'main/css/styles.css' %}">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700,800&display=swap" rel="stylesheet">
+
     {% if base_settings.debug %}
         <script src="{% static 'main/js/jquery-3.3.1.min.js' %}"></script>
     {% else %}
@@ -21,7 +26,7 @@
     {% endif %}
 </head>
 
-<body>
+<body class="{% block body_class %}{% endblock %}">
 
 {% block header %}{% endblock %}
 
