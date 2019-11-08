@@ -46,6 +46,12 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []    # replaced base required field 'username'
     objects = UserManager()
 
+    # username will no longer be a required field
+    username = models.CharField(
+        max_length=10,
+        blank=True, null=True
+    )
+
     email = models.EmailField(
         unique=True,
         error_messages={

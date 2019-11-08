@@ -33,8 +33,8 @@
 {% endblock %}
 
 {% block main_body %}
-    <div class="auth-form">
-        <h2 class="text-center">Login</h2>
+    <div class="auth-form register-form">
+        <h2 class="text-center">Get started for free</h2>
         <form method="post">
             {% csrf_token %}
 
@@ -45,7 +45,25 @@
                 </div>
             {% endif %}
 
-            <div class="form-group mt-5">
+            <div class="form-group mt-5 row">
+                <div class="col-lg-6">
+                    <label for="{{ form.first_name.id_for_label }}">First name</label>
+                    <input type="text" class="form-control" placeholder="First Name"
+                           name="{{ form.first_name.name }}" id="{{ form.first_name.id_for_label }}" value="{{ form.first_name.value|default:"" }}">
+                    {% if  form.first_name.errors %}
+                        <div class="text-danger form-input-error">{{ form.first_name.errors|join:"<br>" }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-lg-6">
+                    <label for="{{ form.last_name.id_for_label }}">Last name</label>
+                    <input type="text" class="form-control" placeholder="Last Name"
+                           name="{{ form.last_name.name }}" id="{{ form.last_name.id_for_label }}" value="{{ form.last_name.value|default:"" }}">
+                    {% if  form.last_name.errors %}
+                        <div class="text-danger form-input-error">{{ form.last_name.errors|join:"<br>" }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group">
                 <label for="{{ form.email.id_for_label }}">Email address</label>
                 <input type="email" class="form-control" placeholder="Email Address"
                        name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" value="{{ form.email.value|default:"" }}">
@@ -54,10 +72,10 @@
                 {% endif %}
             </div>
             <div class="form-group">
-                <label for="{{ form.password.id_for_label }}">Password</label>
-                <input type="password" class="form-control" name="{{ form.password.name }}" id="{{ form.password.id_for_label }}" placeholder="Password">
-                {% if  form.password.errors %}
-                    <div class="text-danger form-input-error">{{ form.password.errors|join:"<br>" }}</div>
+                <label for="{{ form.password1.id_for_label }}">Password</label>
+                <input type="password" class="form-control" name="{{ form.password1.name }}" id="{{ form.password1.id_for_label }}" placeholder="Password">
+                {% if  form.password1.errors %}
+                    <div class="text-danger form-input-error">{{ form.password1.errors|join:"<br>" }}</div>
                 {% endif %}
             </div>
 
@@ -67,7 +85,7 @@
 
             <div class="text-center">
                 <span class="d-inline-block captcha-tooltip" data-toggle="tooltip" data-placement="top" title="Please verify captcha">
-                    <button type="submit" style="pointer-events: none" class="btn btn-primary btn-lg" disabled>Login</button>
+                    <button type="submit" style="pointer-events: none" class="btn btn-primary btn-lg" disabled>Register</button>
                 </span>
             </div>
         </form>
