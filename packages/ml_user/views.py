@@ -1,7 +1,8 @@
 from django.contrib.auth import (
     authenticate,
     login as django_login,
-    views as django_auth_views
+    views as django_auth_views,
+    logout as django_logout,
 )
 from django.http import Http404
 from django.shortcuts import render, redirect
@@ -61,4 +62,9 @@ def sign_up(request):
             'form': form
         }
     )
+
+
+def logout(request):
+    django_logout(request)
+    return redirect('/')    # todo: set logged in url
 
