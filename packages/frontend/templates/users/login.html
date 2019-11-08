@@ -2,14 +2,34 @@
 
 {% block body_class %}user-auth{% endblock %}
 
+{% block head_xtra_js %}
+    <script type="text/javascript">
+        let site_key = '6LcnncEUAAAAAHAwTBtXGKntgT_e4m1fTEIW5mPL';
+        let verifyCallback = function (response) {
+            if (response) {
+                $('form button.btn').prop("disabled", false).css('pointer-events', 'initial');
+                $('.captcha-tooltip').tooltip('disable');
+            }
+        };
+        var onloadCallback = function () {
+            grecaptcha.render('g-recaptcha', {
+                'sitekey': site_key,
+                'callback': verifyCallback,
+            });
+        };
+    </script>
+
+    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
+{% endblock %}
+
 {% block header %}
-<header>
-    <div class="container-fluid">
-        <nav class="navbar navbar-expand-lg navbar-light">
-            <a class="navbar-brand" href="#">Market Lead</a>
-        </nav>
-    </div>
-</header>
+    <header>
+        <div class="container-fluid">
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <a class="navbar-brand" href="#">Market Lead</a>
+            </nav>
+        </div>
+    </header>
 {% endblock %}
 
 {% block main_body %}
@@ -17,12 +37,14 @@
         <h2 class="text-center">Login</h2>
         <form method="post">
             {% csrf_token %}
-        
+
             {% if form.non_field_errors %}
-                <div class="alert alert-danger">Please fix errors marked below form!</div>
-                <div>{{ form.non_field_errors }}</div>
+                <div class="border border-danger pb-2">
+                    <div class="alert alert-danger">Please fix errors marked below form!</div>
+                    <div>{{ form.non_field_errors }}</div>
+                </div>
             {% endif %}
-        
+
             <div class="form-group mt-5">
                 <label for="{{ form.username.id_for_label }}">Email address</label>
                 <input type="email" class="form-control" placeholder="Email Address"
@@ -39,8 +61,14 @@
                 {% endif %}
             </div>
 
+            <div class="text-center pt-2 pb-3">
+                <div class="d-inline-block" id="g-recaptcha"></div>
+            </div>
+
             <div class="text-center">
-                <button type="submit" class="btn btn-primary btn-lg">Login</button>
+                <span class="d-inline-block captcha-tooltip" data-toggle="tooltip" data-placement="top" title="Please verify captcha">
+                    <button type="submit" style="pointer-events: none" class="btn btn-primary btn-lg" disabled>Login</button>
+                </span>
             </div>
         </form>
     </div>

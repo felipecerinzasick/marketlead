@@ -19,11 +19,15 @@
     <link rel="stylesheet" href="{% static 'main/css/styles.css' %}">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700,800&display=swap" rel="stylesheet">
 
+    {% block head_xtra_css %}{% endblock %}
+
     {% if base_settings.debug %}
         <script src="{% static 'main/js/jquery-3.3.1.min.js' %}"></script>
     {% else %}
-        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     {% endif %}
+
+    {% block head_xtra_js %}{% endblock %}
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
@@ -42,6 +46,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 {% endif %}
+
+<script src="{% static 'main/js/scripts.js' %}"></script>
 
 </body>
 </html>
