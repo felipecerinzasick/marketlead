@@ -1,7 +1,6 @@
 from django.contrib.auth import (
     authenticate,
     login as django_login,
-    views as django_auth_views,
     logout as django_logout,
 )
 from django.http import Http404
@@ -16,25 +15,30 @@ def login(request):
     if request.user.is_authenticated:
         return redirect("/")    # todo: set logged in url
 
-    email = request.POST.get('email')
-    password = request.POST.get('password')
-    user = authenticate(request, email=email, password=password)
-    if user is not None:
-        django_login(request, user)
-        if request.GET.get('next'):
-            try:
-                return redirect(request.GET.get('next'))
-            except NoReverseMatch as err:
-                raise Http404(err)
-        return redirect("/")    # todo: set logged in url
-    else:
-        redirect_field_name = "next"
-        return django_auth_views.LoginView.as_view(
-            template_name="users/login.html",
-            redirect_field_name=redirect_field_name,
-            authentication_form=EmailLoginForm,
-            form_class=EmailLoginForm
-        )(request)
+    form = EmailLoginForm()
+    if request.POST:
+        form = EmailLoginForm(request.POST)
+        if form.is_valid():
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            user = authenticate(request, email=email, password=password)
+            if user is not None:
+                django_login(request, user)
+                if request.GET.get('next'):
+                    try:
+                        return redirect(request.GET.get('next'))
+                    except NoReverseMatch as err:
+                        raise Http404(err)
+                return redirect("/")    # todo: set logged in url
+        else:
+            print(form.errors)
+    return render(
+        request,
+        template_name="users/login.html",
+        context={
+            "form": form
+        }
+    )
 
 
 def sign_up(request):
