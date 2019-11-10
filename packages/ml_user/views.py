@@ -16,7 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .forms import EmailLoginForm, RegistrationForm
 from .models import User
 from .tokens import account_activation_token
-from .utls import get_full_url, allowed_post_only
+from .utils import get_full_url, allowed_post_only
 
 
 def login(request):
@@ -66,7 +66,7 @@ def sign_up(request):
             user = authenticate(request, email=email, password=password1)
             if user is not None:
                 # Send an email to the user with the token:
-                verfiy_url = get_full_url(request, rel_url=reverse('verify'))
+                verfiy_url = get_full_url(request, rel_url=reverse('user-auth:verify'))
                 uid = urlsafe_base64_encode(force_bytes(user.id))
                 token = account_activation_token.make_token(user)
                 activation_link = "{0}?uid={1}&token={2}".format(verfiy_url, uid, token)
@@ -76,7 +76,7 @@ def sign_up(request):
                 # email_msg = EmailMessage(mail_subject, message, to=[email])
                 # email_msg.send()
 
-                _url = get_full_url(request, rel_url=reverse('verification'))
+                _url = get_full_url(request, rel_url=reverse('user-auth:verification'))
                 r = requests.post(url=_url, data={"id": 55})
                 return HttpResponse(
                     content=r.content,
