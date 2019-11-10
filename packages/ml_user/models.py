@@ -59,6 +59,12 @@ class User(AbstractUser):
         },
     )
 
+    is_verified = models.BooleanField(
+        verbose_name='verified',
+        default=False,
+        help_text='Email verification',
+    )
+
     def __str__(self):
         return self.email
 

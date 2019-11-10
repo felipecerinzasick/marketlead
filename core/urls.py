@@ -28,5 +28,6 @@ urlpatterns = [
     path('login/', login_view, name='login'),
     path('sign-up/', signup_view, name='sign-up'),
     path('logout/', logout_view, name='logout'),
+    path('user/', include('ml_user.urls')),
     path('admin/', admin.site.urls),
 ]
