@@ -41,12 +41,18 @@ def login(request):
                 return redirect("/")    # todo: set logged in url
         else:
             print(form.errors)
+    context = {
+        "form": form
+    }
+
+    if request.GET.get('verify') == '1':
+        context.update({
+            "verify": True,
+        })
     return render(
         request,
         template_name="users/login.html",
-        context={
-            "form": form
-        }
+        context=context,
     )
 
 
@@ -133,7 +139,6 @@ def verify_signup(request):
         user.is_active = True
         user.is_verified = True
         user.save()
-        django_login(request, user)
-        return redirect('/')
+        return redirect("{}?verify=1".format(reverse('login')))
 
     return HttpResponseForbidden("Invalid activation link")
