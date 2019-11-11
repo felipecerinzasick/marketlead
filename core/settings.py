@@ -111,6 +111,14 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'ml_user.User'
 
+# Email settings
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get('test@gmail.com', '')
+EMAIL_HOST_PASSWORD = os.environ.get('test', '')
+
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/

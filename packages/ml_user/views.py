@@ -5,7 +5,6 @@ from django.contrib.auth import (
     login as django_login,
     logout as django_logout,
 )
-# from django.core.mail import EmailMessage
 from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.shortcuts import render, redirect, reverse
 from django.urls import NoReverseMatch
@@ -13,6 +12,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.decorators.csrf import csrf_exempt
 
+from .emails import EmailFromTemplate
 from .forms import EmailLoginForm, RegistrationForm
 from .models import User
 from .tokens import account_activation_token
@@ -70,11 +70,17 @@ def sign_up(request):
                 uid = urlsafe_base64_encode(force_bytes(user.id))
                 token = account_activation_token.make_token(user)
                 activation_link = "{0}?uid={1}&token={2}".format(verfiy_url, uid, token)
-                print("activation_link: ", activation_link)
-                # message = "Hello {0},\n {1}".format(user.email, activation_link)
-                # mail_subject = 'Activate your account.'
-                # email_msg = EmailMessage(mail_subject, message, to=[email])
-                # email_msg.send()
+                # print("activation_link: ", activation_link)
+
+                eft = EmailFromTemplate(
+                    subject='Verify your email address',
+                    to_email=user.email,
+                    template_name='verify-email.html',
+                    context={
+                        "verification_url": activation_link
+                    },
+                )
+                eft.send_mail()
 
                 _url = get_full_url(request, rel_url=reverse('user-auth:verification'))
                 r = requests.post(url=_url, data={"id": 55})

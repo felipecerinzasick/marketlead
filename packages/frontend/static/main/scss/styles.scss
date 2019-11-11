@@ -29,13 +29,13 @@ body {
             border: 1px solid rgba(74, 74, 74, 0.5);
             padding: 25px 20px;
             @media (min-width: 480px) {
-                padding: 30px 25px 35px;
+                padding: 30px 25px;
             }
             @media (min-width: 768px) {
-                padding: 30px 35px 40px;
+                padding: 30px 35px;
             }
             @media (min-width: 991px) {
-                padding: 40px 45px 60px;
+                padding: 40px 45px;
             }
             h2 {
                 font-size: 35px;
@@ -83,5 +83,6 @@ body {
 
     .verification-msg {
         line-height: 1.5;
+        font-size: 35px !important;
     }
 }

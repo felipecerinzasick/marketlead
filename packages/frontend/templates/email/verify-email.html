@@ -1,0 +1,24 @@
+{% extends 'email/base.html' %}
+
+{% block content %}
+    <table>
+        <tr>
+            <td style="font-weight: bold; font-size: 24px; text-align: center;padding-bottom: 40px;" align="center">Welcome to Marketlead.org</td>
+        </tr>
+        <tr>
+            <td>Thank you for signing up. <br>Please verify your email address by clicking the button below</td>
+        </tr>
+        <tr>
+            <td style="text-align: center; padding: 25px 0;" align="center">
+                <a href="{{ verification_url }}" style="padding: 8px 14px; background-color: #00a963; font-size: 16px;color: #fff; text-decoration: none;">Verify Email</a>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding-bottom: 40px;">
+                If you cannot see the button, copy and paste the link below to the browser
+                <br>
+                <a href="{{ verification_url }}" style="padding-top: 10px;">{{ verification_url }}</a>
+            </td>
+        </tr>
+    </table>
+{% endblock %}
