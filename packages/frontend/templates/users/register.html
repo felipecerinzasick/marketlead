@@ -3,23 +3,7 @@
 {% block body_class %}user-auth{% endblock %}
 
 {% block head_xtra_js %}
-    <script type="text/javascript">
-        let site_key = '6LcnncEUAAAAAHAwTBtXGKntgT_e4m1fTEIW5mPL';
-        let verifyCallback = function (response) {
-            if (response) {
-                $('form button.btn').prop("disabled", false).css('pointer-events', 'initial');
-                $('.captcha-tooltip').tooltip('disable');
-            }
-        };
-        var onloadCallback = function () {
-            grecaptcha.render('g-recaptcha', {
-                'sitekey': site_key,
-                'callback': verifyCallback,
-            });
-        };
-    </script>
-
-    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
+    {% include 'includes/google-recaptcha.html' %}
 {% endblock %}
 
 {% block header %}
@@ -49,7 +33,7 @@
                 <div class="form-group mt-5 row">
                     <div class="col-lg-6">
                         <label for="{{ form.first_name.id_for_label }}">First name</label>
-                        <input type="text" class="form-control" placeholder="First Name"
+                        <input type="text" class="form-control" placeholder="First name"
                                name="{{ form.first_name.name }}" id="{{ form.first_name.id_for_label }}" value="{{ form.first_name.value|default:"" }}">
                         {% if  form.first_name.errors %}
                             <div class="text-danger form-input-error">{{ form.first_name.errors|join:"<br>" }}</div>
@@ -57,7 +41,7 @@
                     </div>
                     <div class="col-lg-6">
                         <label for="{{ form.last_name.id_for_label }}">Last name</label>
-                        <input type="text" class="form-control" placeholder="Last Name"
+                        <input type="text" class="form-control" placeholder="Last name"
                                name="{{ form.last_name.name }}" id="{{ form.last_name.id_for_label }}" value="{{ form.last_name.value|default:"" }}">
                         {% if  form.last_name.errors %}
                             <div class="text-danger form-input-error">{{ form.last_name.errors|join:"<br>" }}</div>
@@ -66,7 +50,7 @@
                 </div>
                 <div class="form-group">
                     <label for="{{ form.email.id_for_label }}">Email address</label>
-                    <input type="email" class="form-control" placeholder="Email Address"
+                    <input type="email" class="form-control" placeholder="Email address"
                            name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" value="{{ form.email.value|default:"" }}">
                     {% if  form.email.errors %}
                         <div class="text-danger form-input-error">{{ form.email.errors|join:"<br>" }}</div>
@@ -76,10 +60,14 @@
                     <label for="{{ form.password1.id_for_label }}">Password</label>
                     <input type="password" class="form-control" name="{{ form.password1.name }}" id="{{ form.password1.id_for_label }}" placeholder="Password">
                     {% if  form.password1.errors or form.password2.errors %}
-                        <div class="text-danger form-input-error">
-                            {{ form.password1.errors|join:"<br>" }}
-                            {{ form.password2.errors|join:"<br>" }}
-                        </div>
+                        <div class="text-danger form-input-error">{{ form.password1.errors|join:"<br>" }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.password2.id_for_label }}">Re-type Password</label>
+                    <input type="password" class="form-control" name="{{ form.password2.name }}" id="{{ form.password2.id_for_label }}" placeholder="Password again">
+                    {% if  form.password2.errors or form.password2.errors %}
+                        <div class="text-danger form-input-error">{{ form.password2.errors|join:"<br>" }}</div>
                     {% endif %}
                 </div>
     

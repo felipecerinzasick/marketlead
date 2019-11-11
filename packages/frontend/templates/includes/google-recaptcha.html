@@ -1,0 +1,17 @@
+<script type="text/javascript">
+    let site_key = '6LcnncEUAAAAAHAwTBtXGKntgT_e4m1fTEIW5mPL';
+    let verifyCallback = function (response) {
+        if (response) {
+            $('form button.btn').prop("disabled", false).css('pointer-events', 'initial');
+            $('.captcha-tooltip').tooltip('disable');
+        }
+    };
+    var onloadCallback = function () {
+        grecaptcha.render('g-recaptcha', {
+            'sitekey': site_key,
+            'callback': verifyCallback,
+        });
+    };
+</script>
+
+<script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>

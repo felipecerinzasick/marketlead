@@ -16,13 +16,6 @@ class RegistrationForm(UserCreationForm):
         model = User
         fields = ('email', 'first_name', 'last_name', 'password1', 'password2')
 
-    def clean(self):
-        cleaned_data = super(RegistrationForm, self).clean()
-        pswd_1 = cleaned_data.get('password1')
-        if pswd_1:
-            self.cleaned_data['password2'] = pswd_1
-        return cleaned_data
-
 
 class EmailLoginForm(forms.ModelForm):
     error_messages = {

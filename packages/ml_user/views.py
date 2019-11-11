@@ -5,9 +5,11 @@ from django.contrib.auth import (
     login as django_login,
     logout as django_logout,
 )
+from django.contrib.auth.views import (PasswordResetView, PasswordResetDoneView,
+                                       PasswordResetConfirmView, PasswordResetCompleteView)
 from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.shortcuts import render, redirect, reverse
-from django.urls import NoReverseMatch
+from django.urls import NoReverseMatch, reverse_lazy
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.decorators.csrf import csrf_exempt
@@ -142,3 +144,28 @@ def verify_signup(request):
         return redirect("{}?verify=1".format(reverse('login')))
 
     return HttpResponseForbidden("Invalid activation link")
+
+
+class CustomPasswordResetView(PasswordResetView):
+    title = 'Password reset'
+    template_name = 'users/password/reset-form.html'
+    email_template_name = 'email/password-reset.html'
+    html_email_template_name = 'email/password-reset.html'
+    subject_template_name = 'email/password-reset-email-subject.txt'
+    success_url = reverse_lazy('user-auth:reset-password-done')
+
+
+class CustomPasswordResetDoneView(PasswordResetDoneView):
+    title = 'Password reset sent'
+    template_name = 'users/password/reset-done.html'
+
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    title = 'Enter new password'
+    template_name = 'users/password/reset-confirmation.html'
+    success_url = reverse_lazy('user-auth:reset-password-success')
+
+
+class CustomPasswordResetSuccessView(PasswordResetCompleteView):
+    title = 'Password reset complete'
+    template_name = 'users/password/reset-complete.html'

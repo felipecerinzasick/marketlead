@@ -3,23 +3,7 @@
 {% block body_class %}user-auth{% endblock %}
 
 {% block head_xtra_js %}
-    <script type="text/javascript">
-        let site_key = '6LcnncEUAAAAAHAwTBtXGKntgT_e4m1fTEIW5mPL';
-        let verifyCallback = function (response) {
-            if (response) {
-                $('form button.btn').prop("disabled", false).css('pointer-events', 'initial');
-                $('.captcha-tooltip').tooltip('disable');
-            }
-        };
-        var onloadCallback = function () {
-            grecaptcha.render('g-recaptcha', {
-                'sitekey': site_key,
-                'callback': verifyCallback,
-            });
-        };
-    </script>
-
-    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
+    {% include 'includes/google-recaptcha.html' %}
 {% endblock %}
 
 {% block header %}
@@ -58,7 +42,7 @@
     
                 <div class="form-group mt-5">
                     <label for="{{ form.email.id_for_label }}">Email address</label>
-                    <input type="email" class="form-control" placeholder="Email Address"
+                    <input type="email" class="form-control" placeholder="Email address"
                            name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" value="{{ form.email.value|default:"" }}">
                     {% if  form.email.errors %}
                         <div class="text-danger form-input-error">{{ form.email.errors|join:"<br>" }}</div>
@@ -86,7 +70,7 @@
             </form>
         </div>
         <div class="text-center fgpass-link">
-            <a href="#">Forgot Password</a>
+            <a href="{% url 'user-auth:reset-password' %}">Forgot Password</a>
         </div>
     </div>
 {% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block body_class %}user-auth{% endblock %}
+
+{% block header %}
+    <header>
+        <div class="container-fluid">
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <a class="navbar-brand" href="#">Market Lead</a>
+            </nav>
+        </div>
+    </header>
+{% endblock %}
+
+{% block main_body %}
+    <div class="d-inline-block auth-form-wrapper">
+        <div class="alert alert-warning m-auto text-center pt-4 px-5 border border-dark">
+            <h2 class="text-center">Check your inbox</h2>
+            <hr>
+            <p>We've emailed you instructions for setting your password. You should receive the email shortly!</p>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block footer %}{# making this block empty #}{% endblock %}

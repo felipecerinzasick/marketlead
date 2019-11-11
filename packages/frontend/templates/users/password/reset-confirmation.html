@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block body_class %}user-auth{% endblock %}
+
+{% block head_xtra_js %}
+    {% if not form %}
+        <script>
+            window.location = '{% url 'user-auth:reset-password' %}'
+        </script>
+    {% endif %}
+{% endblock %}
+
+{% block header %}
+    <header>
+        <div class="container-fluid">
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <a class="navbar-brand" href="#">Market Lead</a>
+            </nav>
+        </div>
+    </header>
+{% endblock %}
+
+{% block main_body %}
+    <div class="d-inline-block auth-form-wrapper">
+        <div class="auth-form">
+            <h2 class="text-center">Reset Password</h2>
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="form-group mt-5">
+                    <label for="{{ form.new_password1.id_for_label }}">Type your a new password</label>
+                    <input type="password" class="form-control" placeholder="Password"
+                           name="{{ form.new_password1.name }}" id="{{ form.new_password1.id_for_label }}" value="{{ form.new_password1.value|default:"" }}">
+                    {% if  form.new_password1.errors %}
+                        <div class="text-danger form-input-error">{{ form.new_password1.errors|join:"<br>" }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.new_password2.id_for_label }}">Retype password</label>
+                    <input type="password" class="form-control" placeholder="Password again"
+                           name="{{ form.new_password2.name }}" id="{{ form.new_password2.id_for_label }}" value="{{ form.new_password2.value|default:"" }}">
+                    {% if  form.new_password2.errors %}
+                        <div class="text-danger form-input-error">{{ form.new_password2.errors|join:"<br>" }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary btn-lg">Reset</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block footer %}{# making this block empty #}{% endblock %}
