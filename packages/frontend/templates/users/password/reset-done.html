@@ -1,16 +1,4 @@
-{% extends 'base.html' %}
-
-{% block body_class %}user-auth{% endblock %}
-
-{% block header %}
-    <header>
-        <div class="container-fluid">
-            <nav class="navbar navbar-expand-lg navbar-light">
-                <a class="navbar-brand" href="#">Market Lead</a>
-            </nav>
-        </div>
-    </header>
-{% endblock %}
+{% extends 'users/base.html' %}
 
 {% block main_body %}
     <div class="d-inline-block auth-form-wrapper">
@@ -22,5 +10,3 @@
     </div>
 {% endblock %}
 
-
-{% block footer %}{# making this block empty #}{% endblock %}
