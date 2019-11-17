@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block main_css %}
+    <link rel="stylesheet" href="{% static 'main/css/dashboard.css' %}">
+{% endblock %}
+
+{% block header %}
+    <header id="dashboard-header" class="bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <a class="navbar-brand" href="{% url 'dashboard:home' %}">MarketLead</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu-top"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="main-menu-top">
+                <div class="dropdown ml-auto">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user"></i>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="{% url 'user-auth:reset-password' %}">Forgot Password</a>
+                        <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+{% endblock %}
+
+
+{% block main_body %}
+
+    <div id="bt-main-body">
+        <div class="container-fluid">
+            <div class="row">
+                <aside class="col bg-info" id="bt-sidebar">
+                    <nav>
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="#" class="text-white">
+                                    <i class="fas fa-home"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="text-white">
+                                    <i class="fas fa-receipt"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="text-white">
+                                    <i class="fas fa-clipboard"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </aside>
+                <main class="col" id="bt-main" role="main">
+                    <div class="row">
+                        <div id="db-heading" class="border-bottom py-3 col-12">
+                            {% block dashboard_heading %}{% endblock %}
+                        </div>
+                        <div id="db-body" class="col-12">
+                            {% block dashboard_body %}{% endblock %}
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+{% endblock %}

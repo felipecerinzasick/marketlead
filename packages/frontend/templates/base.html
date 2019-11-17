@@ -16,7 +16,10 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
     {% endif %}
 
-    <link rel="stylesheet" href="{% static 'main/css/styles.css' %}">
+    {% block main_css %}
+        <link rel="stylesheet" href="{% static 'main/css/auth.css' %}">
+    {% endblock %}
+
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700,800&display=swap" rel="stylesheet">
 
     {% block head_xtra_css %}{% endblock %}
