@@ -1,4 +1,5 @@
 @import "vars";
+@import "default";
 
 body {
     font-family: 'Montserrat', sans-serif;
@@ -70,15 +71,6 @@ body {
                 @media (min-width: 1024px) {
                     width: 450px;
                 }
-            }
-            button.btn {
-                background-color: $primary-btn;
-                font-size: 24px;
-                font-weight: 500;
-                $px: 50px;
-                padding-right: $px;
-                padding-left: $px;
-                margin: 0 auto;
             }
             &.register-form {
                 .form-control {

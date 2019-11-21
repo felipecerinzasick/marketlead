@@ -1,0 +1,12 @@
+@import "vars";
+
+.btn-ml {
+    background-color: $primary-btn;
+    color: #fff;
+    font-size: 24px;
+    font-weight: 500;
+    $px: 50px;
+    padding-right: $px;
+    padding-left: $px;
+    margin: 0 auto;
+}

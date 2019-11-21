@@ -32,27 +32,7 @@
     <div id="bt-main-body">
         <div class="container-fluid">
             <div class="row">
-                <aside class="col bg-info" id="bt-sidebar">
-                    <nav>
-                        <ul class="list-unstyled">
-                            <li>
-                                <a href="#" class="text-white">
-                                    <i class="fas fa-home"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" class="text-white">
-                                    <i class="fas fa-receipt"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" class="text-white">
-                                    <i class="fas fa-clipboard"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </aside>
+                {% include 'includes/analytics-sidebar.html' %}
                 <main class="col" id="bt-main" role="main">
                     <div class="row">
                         <div id="db-heading" class="border-bottom py-3 col-12">

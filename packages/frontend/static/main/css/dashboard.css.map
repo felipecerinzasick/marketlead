@@ -1,7 +1,7 @@
 {
 "version": 3,
-"mappings": "AACI,gCAAe,CACX,IAAI,CAAE,OAAO,CACb,KAAK,CAAE,iBAAiB,CAGhC,WAAY,CACR,SAAS,CAAE,IAAI,CACf,UAAU,CAAE,kBAAkB",
-"sources": ["../scss/dashboard.scss"],
+"mappings": "AAEA,OAAQ,CACJ,gBAAgB,CCFA,OAAO,CDGvB,KAAK,CAAE,IAAI,CACX,SAAS,CAAE,IAAI,CACf,WAAW,CAAE,GAAG,CAEhB,aAAa,CADR,IAAI,CAET,YAAY,CAFP,IAAI,CAGT,MAAM,CAAE,MAAM,CENd,gCAAe,CACX,IAAI,CAAE,OAAO,CACb,KAAK,CAAE,iBAAiB,CAGhC,WAAY,CACR,SAAS,CAAE,IAAI,CACf,UAAU,CAAE,kBAAkB",
+"sources": ["../scss/_default.scss","../scss/_vars.scss","../scss/dashboard.scss"],
 "names": [],
 "file": "dashboard.css"
 }
