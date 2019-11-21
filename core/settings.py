@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'ml_user',
-    'dashboard',
+    'analytics',
     'frontend',
 ]
 

@@ -24,7 +24,7 @@ from ml_user.views import (
 
 
 urlpatterns = [
-    path('', include('dashboard.urls', namespace='dashboard')),
+    path('', include('analytics.urls', namespace='analytics')),
     path('login/', login_view, name='login'),
     path('sign-up/', signup_view, name='sign-up'),
     path('logout/', logout_view, name='logout'),
