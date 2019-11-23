@@ -1,0 +1,23 @@
+{% extends 'analytics/base.html' %}
+
+{% block dashboard_heading %}
+    <header class="d-flex">
+        <span>Campaign</span>
+        <span class="ml-auto font-weight-bold">Details</span>
+    </header>
+{% endblock %}
+
+{% block dashboard_body %}
+    <div class="d-flex flex-column">
+        <h2 class="mx-auto mb-4" style="margin-top: 10%">Details Campaign:</h2>
+        <div class="d-flex justify-content-center flex-column text-center">
+            <p><span class="font-weight-bold">Domain: </span> {{ object.domain }}</p>
+            <p><span class="font-weight-bold">Site url: </span> <a target="_blank" href="{{ object.url }}">{{ object.url }}</a></p>
+            <p><span class="font-weight-bold">Analytics ID: </span> <span class="bg-secondary text-white rounded p-2">{{ object.unique_id }}</span></p>
+            <p>
+                <span class="font-weight-bold">Site verified? : </span> 
+                {% if object.is_verified %}<i class="fas fa-check-circle text-success"></i> {% else %}<i class="fas fa-times-circle text-danger"></i>{% endif %}
+            </p>
+        </div>
+    </div>
+{% endblock %}

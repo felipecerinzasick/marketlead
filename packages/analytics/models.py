@@ -15,7 +15,10 @@ class Client(models.Model):
     url = models.URLField(_("Site URL"), help_text="Website's root url without scheme (http/https)")
     is_verified = models.BooleanField(default=False)
 
-    unique_id = models.UUIDField(editable=False)
+    unique_id = models.CharField(max_length=50)
+
+    class Meta:
+        unique_together = ('user', 'url',)
 
     def __str__(self):
         user = self.user.email.split('@')[0] or self.user.id
@@ -41,6 +44,10 @@ class Visit(models.Model):
         _("Last Visited"),
         auto_now=True,
     )
+
+    class Meta:
+        verbose_name = _('Site Visit Count')
+        verbose_name_plural = _('Site Visit Counts')
 
 
 """
