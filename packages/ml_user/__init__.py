@@ -1,0 +1,1 @@
+default_app_config = 'ml_user.apps.MlUserConfig'
