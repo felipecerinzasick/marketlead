@@ -5,17 +5,29 @@ from django.utils.translation import ugettext_lazy as _
 
 User = get_user_model()
 
+URL_HELP_TEXT = "URL must be with or without scheme (http/https)"
+
 
 class Client(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
     )
-    domain = models.CharField(_("Site Name"), max_length=255,)
-    url = models.URLField(_("Site URL"), help_text="Website's root url without scheme (http/https)")
+    domain = models.CharField(
+        _("Site Name"),
+        max_length=255,
+    )
+    url = models.URLField(
+        _("Site URL"),
+        help_text=URL_HELP_TEXT
+    )
     is_verified = models.BooleanField(default=False)
 
-    unique_id = models.CharField(max_length=50)
+    track_id = models.CharField(
+        _("Track ID"),
+        max_length=50,
+        unique=True,
+    )
 
     class Meta:
         unique_together = ('user', 'url',)
@@ -25,9 +37,24 @@ class Client(models.Model):
         return "{} ({})".format(user, self.domain)
 
 
-class Visit(models.Model):
-    client = models.ForeignKey(
+class Page(models.Model):
+    host = models.ForeignKey(
         Client,
+        on_delete=models.CASCADE
+    )
+    name = models.CharField(max_length=200)
+    url = models.URLField(help_text=URL_HELP_TEXT)
+
+    class Meta:
+        unique_together = ('host', 'url',)
+
+    def __str__(self):
+        return self.name
+
+
+class Visit(models.Model):
+    page = models.ForeignKey(
+        Page,
         on_delete=models.CASCADE,
     )
 
@@ -46,8 +73,8 @@ class Visit(models.Model):
     )
 
     class Meta:
-        verbose_name = _('Site Visit Count')
-        verbose_name_plural = _('Site Visit Counts')
+        verbose_name = _('Page Visit Count')
+        verbose_name_plural = _('Page Visit Counts')
 
 
 """
