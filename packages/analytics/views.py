@@ -2,7 +2,7 @@ import json
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.shortcuts import render, reverse
+from django.shortcuts import render, reverse, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import View
@@ -71,6 +71,14 @@ class NewCampaignPageView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse('analytics:view-campaign-page', kwargs={'pk': self.object.pk})
+
+
+class NewCampaignPageByClientView(NewCampaignPageView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        client = get_object_or_404(Client, pk=self.kwargs['pk'])
+        context['client_obj'] = client
+        return context
 
 
 class SingleCampaignPageView(LoginRequiredMixin, DetailView):

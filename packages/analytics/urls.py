@@ -4,7 +4,8 @@ from .views import (
     home, add_code_to_site,
     NewCampaignView, SingleCampaignView,
     EditCampaignView, AllCampaignView,
-    NewCampaignPageView, SingleCampaignPageView, SingleCampaignAllPagesView,
+    NewCampaignPageView, NewCampaignPageByClientView,
+    SingleCampaignPageView, SingleCampaignAllPagesView,
     EditCampaignPageView, AllCampaignPageView,
     TrafficCounter
 )
@@ -23,6 +24,7 @@ urlpatterns = [
 
     path('campaign/page/all/', AllCampaignPageView.as_view(), name='all-campaign-page'),
     path('campaign/page/new/', NewCampaignPageView.as_view(), name='new-campaign-page'),
+    path('campaign/page/new/<pk>/', NewCampaignPageByClientView.as_view(), name='new-campaign-page-by-campaign'),
     path('campaign/page/view/<int:pk>/', SingleCampaignPageView.as_view(), name='view-campaign-page'),
     path('campaign/page/edit/<int:pk>/', EditCampaignPageView.as_view(), name='edit-campaign-page'),
     path('traffic/', TrafficCounter.as_view(), name='test_ajax')

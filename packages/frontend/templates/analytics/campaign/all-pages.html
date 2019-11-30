@@ -22,6 +22,9 @@
                     </div>
                 {% endfor %}
             </div>
+            <div class="py-4">
+                <a class="btn btn-primary" href="{% url 'analytics:new-campaign-page-by-campaign' client.pk %}">Create new page</a>
+            </div>
         </div>
     </div>
 {% endblock %}
