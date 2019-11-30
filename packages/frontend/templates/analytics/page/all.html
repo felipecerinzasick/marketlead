@@ -1,0 +1,49 @@
+{% extends 'analytics/base.html' %}
+
+{% block dashboard_heading %}
+    <header class="d-flex">
+        <span>Campaign/Page</span>
+        <span class="ml-auto font-weight-bold">Details</span>
+    </header>
+{% endblock %}
+
+{% block dashboard_body %}
+    <div class="d-flex flex-column">
+    
+    <div class="d-flex justify-content-between mt-2 py-4">
+        <h2>All Pages:</h2>
+        <a class="btn btn-primary align-self-center" href="{% url 'analytics:new-campaign-page' %}">Create New Page</a>
+    </div>
+
+        {% if object_list %}
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Page Name</th>
+                        <th scope="col">Page URL</th>
+                        <th scope="col">Host URL</th>
+                        <th scope="col">Site Verified?</th>
+                        <th scope="col">Edit?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for page in object_list %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ page.name }}</td>
+                            <td><a target="_blank" href="{{ page.url }}">{{ page.url }}</a></td>
+                            <td><a target="_blank" href="{{ page.host.url }}">{{ page.host.url }}</a></td>
+                            <td>
+                                {% if page.site.is_verified %}<i class="fas fa-check-circle text-success"></i> {% else %}<i class="fas fa-times-circle text-danger"></i>{% endif %}
+                            </td>
+                            <td><a href="{% url 'analytics:edit-campaign-page' page.pk %}">Edit</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="text-center">No Pages Found !</p>
+        {% endif %}
+    </div>
+{% endblock %}

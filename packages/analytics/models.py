@@ -1,3 +1,5 @@
+from urllib.parse import urlparse
+
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
@@ -33,8 +35,7 @@ class Client(models.Model):
         unique_together = ('user', 'url',)
 
     def __str__(self):
-        user = self.user.email.split('@')[0] or self.user.id
-        return "{} ({})".format(user, self.domain)
+        return self.domain
 
 
 class Page(models.Model):
@@ -50,6 +51,15 @@ class Page(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        # check client host and page host before saving
+        if getattr(self, 'url') and getattr(self, 'host'):
+            page_url_parsed = urlparse(self.url)
+            client_url_parsed = urlparse(self.host.url)
+            if page_url_parsed.netloc != client_url_parsed.netloc:
+                raise KeyError("Page domain is not matched with client's domain")
+        super(Page, self).save(*args, **kwargs)
 
 
 class Visit(models.Model):

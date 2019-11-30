@@ -11,9 +11,9 @@
     <div class="d-flex flex-column">
         <h2 class="mx-auto mb-4" style="margin-top: 10%">Details Campaign:</h2>
         <div class="d-flex justify-content-center flex-column text-center">
-            <p><span class="font-weight-bold">Domain: </span> {{ object.domain }}</p>
+            <p><span class="font-weight-bold">Site name: </span> {{ object.domain }}</p>
             <p><span class="font-weight-bold">Site url: </span> <a target="_blank" href="{{ object.url }}">{{ object.url }}</a></p>
-            <p><span class="font-weight-bold">Analytics ID: </span> <span class="bg-secondary text-white rounded p-2">{{ object.unique_id }}</span></p>
+            <p><span class="font-weight-bold">Track ID: </span> <span class="bg-secondary text-white rounded p-2">{{ object.track_id }}</span></p>
             <p>
                 <span class="font-weight-bold">Site verified? : </span> 
                 {% if object.is_verified %}<i class="fas fa-check-circle text-success"></i> {% else %}<i class="fas fa-times-circle text-danger"></i>{% endif %}

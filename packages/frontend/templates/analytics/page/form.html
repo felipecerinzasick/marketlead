@@ -2,7 +2,7 @@
 
 {% block dashboard_heading %}
     <header class="d-flex">
-        <span>Campaign</span>
+        <span>Campaign/Page</span>
         <span class="ml-auto font-weight-bold">
             {% if editing %}Edit
             {% else %}Add New{% endif %}
@@ -13,26 +13,41 @@
 {% block dashboard_body %}
     <div class="d-flex flex-column">
         <h2 class="mx-auto mb-4" style="margin-top: 10%">
-            {% if editing %}Edit{% else %}Create new{% endif %} Campaign:
+            {% if editing %}Edit{% else %}Create new{% endif %} Campaign Page:
         </h2>
         <div class="d-flex justify-content-center">
             <form method="post" class="border border-dark p-4 text-right" style="width: 700px; max-width: 100%;">
                 {% csrf_token %}
-                <input type="hidden" name="{{ form.user.name }}" value="{{ form.user.value|default:"" }}">
-
+            
                 {% if form.non_field_errors %}
                     <div class="text-left border border-danger text-danger p-3 mb-5">
                         <div class="alert alert-danger">Please fix errors marked below form!</div>
                         <div>{{ form.non_field_errors }}</div>
                     </div>
                 {% endif %}
-            
+
                 <div class="form-group row">
-                    <label for="{{ form.domain.id_for_label }}" class="col-sm-2 col-form-label">{{ form.domain.label }}</label>
+                    <label for="{{ form.host.id_for_label }}" class="col-sm-2 col-form-label">{{ form.host.label }}</label>
                     <div class="col-sm-10 text-left">
-                        <input type="text" class="form-control" name="{{ form.domain.name }}" id="{{ form.domain.id_for_label }}" value="{{ form.domain.value|default:"" }}">
-                        {% if  form.domain.errors %}
-                            <div class="text-danger form-input-error">{{ form.domain.errors|join:"<br>" }}</div>
+                        <select class="form-control"
+                                name="{{ form.host.html_name }}"
+                                id="{{ form.host.id_for_label }}">
+                            {% for choice in form.host.field.choices %}
+                                <option value="{{ choice.0 }}" {% if form.host.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if form.host.errors %}
+                            <div class="text-danger form-input-error">{{ form.host.errors|join:"<br>" }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="{{ form.name.id_for_label }}" class="col-sm-2 col-form-label">{{ form.name.label }}</label>
+                    <div class="col-sm-10 text-left">
+                        <input type="text" class="form-control" name="{{ form.name.name }}" id="{{ form.name.id_for_label }}" value="{{ form.name.value|default:"" }}">
+                        {% if  form.name.errors %}
+                            <div class="text-danger form-input-error">{{ form.name.errors|join:"<br>" }}</div>
                         {% endif %}
                     </div>
                 </div>
@@ -47,18 +62,6 @@
                         {% endif %}
                     </div>
                 </div>
-
-                {% if editing %}
-                    <div class="form-group row">
-                        <label for="{{ form.unique_id.id_for_label }}" class="col-sm-2 col-form-label">{{ form.unique_id.label }}</label>
-                        <div class="col-sm-10 text-left">
-                            <input type="text" readonly class="form-control disabled" name="{{ form.unique_id.name }}" id="{{ form.unique_id.id_for_label }}" value="{{ form.unique_id.value|default:"" }}">
-                            {% if  form.unique_id.errors %}
-                                <div class="text-danger form-input-error">{{ form.unique_id.errors|join:"<br>" }}</div>
-                            {% endif %}
-                        </div>
-                    </div>
-                {% endif %}
 
                 <button type="submit" class="btn btn-ml mt-3">{% if editing %}Update{% else %}Create{% endif %}</button>
             </form>

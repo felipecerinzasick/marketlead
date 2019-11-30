@@ -9,7 +9,7 @@
 
 {% block dashboard_body %}
     <div class="d-flex flex-column">
-        <h2 class="mx-auto mb-4" style="margin-top: 10%">Details Campaign:</h2>
+        <h2 class="mx-auto mb-4" style="margin-top: 10%">All Campaigns:</h2>
 
         <table class="table table-bordered">
             <thead>
@@ -17,7 +17,7 @@
                     <th scope="col">#</th>
                     <th scope="col">Site Name</th>
                     <th scope="col">URL</th>
-                    <th scope="col">Analytics ID</th>
+                    <th scope="col">Track ID</th>
                     <th scope="col">Site Verified?</th>
                     <th scope="col">Edit?</th>
                 </tr>
@@ -28,7 +28,7 @@
                         <td>{{ forloop.counter }}</td>
                         <td>{{ object.domain }}</td>
                         <td><a target="_blank" href="{{ object.url }}">{{ object.url }}</a></td>
-                        <td>{{ object.unique_id }}</td>
+                        <td>{{ object.track_id }}</td>
                         <td>
                             {% if object.is_verified %}<i class="fas fa-check-circle text-success"></i> {% else %}<i class="fas fa-times-circle text-danger"></i>{% endif %}
                         </td>

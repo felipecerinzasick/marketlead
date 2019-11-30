@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, reverse
@@ -9,8 +11,8 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .forms import ClientForm
-from .models import Client
+from .forms import ClientForm, PageForm
+from .models import Client, Page, Visit
 
 
 @login_required
@@ -25,7 +27,7 @@ def add_code_to_site(request):
 
 class NewCampaignView(LoginRequiredMixin, CreateView):
     form_class = ClientForm
-    template_name = 'analytics/campaign-form.html'
+    template_name = 'analytics/campaign/form.html'
 
     def get_initial(self):
         self.initial.update({'user': self.request.user })
@@ -37,13 +39,13 @@ class NewCampaignView(LoginRequiredMixin, CreateView):
 
 class SingleCampaignView(LoginRequiredMixin, DetailView):
     model = Client
-    template_name = 'analytics/single-campaign.html'
+    template_name = 'analytics/campaign/single.html'
 
 
 class EditCampaignView(LoginRequiredMixin, UpdateView):
     model = Client
     form_class = ClientForm
-    template_name = 'analytics/campaign-form.html'
+    template_name = 'analytics/campaign/form.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -56,7 +58,39 @@ class EditCampaignView(LoginRequiredMixin, UpdateView):
 
 class AllCampaignView(LoginRequiredMixin, ListView):
     model = Client
-    template_name = 'analytics/all-campaign.html'
+    template_name = 'analytics/campaign/all.html'
+
+
+class NewCampaignPageView(LoginRequiredMixin, CreateView):
+    form_class = PageForm
+    template_name = 'analytics/page/form.html'
+
+    def get_success_url(self):
+        return reverse('analytics:view-campaign-page', kwargs={'pk': self.object.pk})
+
+
+class SingleCampaignPageView(LoginRequiredMixin, DetailView):
+    model = Page
+    template_name = 'analytics/page/single.html'
+
+
+class EditCampaignPageView(LoginRequiredMixin, UpdateView):
+    model = Page
+    form_class = PageForm
+    template_name = 'analytics/page/form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['editing'] = True
+        return context
+
+    def get_success_url(self):
+        return reverse('analytics:view-campaign-page', kwargs={'pk': self.object.pk})
+
+
+class AllCampaignPageView(LoginRequiredMixin, ListView):
+    model = Page
+    template_name = 'analytics/page/all.html'
 
 
 class TrafficCounter(View):
@@ -67,7 +101,11 @@ class TrafficCounter(View):
         return super(TrafficCounter, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        print("GET: {}".format(request.GET))
+        json_str = request.GET.get('json')
+
+        for k, v in (json.loads(json_str)).items():
+            print("data=>   {}:{}".format(k, v))
+
         return JsonResponse({
             "Gg": 1
         })
