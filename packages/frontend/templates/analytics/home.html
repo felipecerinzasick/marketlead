@@ -17,19 +17,27 @@
     </div>
 {% endblock %}
 
-    {% comment %}
-    <script>//working...
-    "use strict";
+{% comment %}
+<script>
+((c, d, e, f) => new Promise(
+    (resolve, reject) => {
+        let a = d.createElement(e),
+            b = d.getElementsByTagName(e)[0];
+        a.async = 1;
+        a.src = f;
+        a.onload = resolve;
+        a.onerror = reject;
+        b.parentNode.insertBefore(a, b)
+    }))(window, document, 'script', 'https://actstylo.ngrok.io/static/analytics.js').then(function () {
+    mcr('track-id')
+});
+</script>{% endcomment %}
 
-    //Construct the script tag at Runtime
-    function requestServerCall(url) {
-        var head = document.head;
-        var script = document.createElement("script");
-        script.setAttribute("src", url);
-        head.appendChild(script);
-        head.removeChild(script);
-    }
-
-    //Send Request to Server
-    requestServerCall("https://actstylo.ngrok.io/traffic/?callback=jsonpCallback&message=WTFWTF");
-    </script>{% endcomment %}
+{% comment %}
+{# minified #}
+<script>
+((e,t,n,o)=>new Promise((e,o)=>{let r=t.createElement(n),a=t.getElementsByTagName(n)[0];
+r.async=1,r.src="https://actstylo.ngrok.io/static/analytics.js",r.onload=e,r.onerror=o,
+a.parentNode.insertBefore(r,a)}))(window,document,"script").then(function(){mcr("track-id")});
+</script>
+{% endcomment %}

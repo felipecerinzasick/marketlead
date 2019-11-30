@@ -1,3 +1,6 @@
+from urllib.parse import urlparse
+
+
 IP_TRY = [
     "HTTP_X_FORWARDED_FOR",
     "X_FORWARDED_FOR",
@@ -21,3 +24,7 @@ def ip_from_request(request):
             break
     return ip
 
+
+def stripped_scheme_url(url):
+    parsed_url = urlparse(url)
+    return parsed_url.hostname + parsed_url.path

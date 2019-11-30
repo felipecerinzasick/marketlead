@@ -64,7 +64,7 @@ class Page(models.Model):
         if getattr(self, 'url') and getattr(self, 'host'):
             page_url_parsed = urlparse(self.url)
             client_url_parsed = urlparse(self.host.url)
-            if page_url_parsed.netloc != client_url_parsed.netloc:
+            if page_url_parsed.hostname != client_url_parsed.hostname:
                 raise KeyError("Page domain is not matched with client's domain")
         super(Page, self).save(*args, **kwargs)
 
@@ -91,10 +91,10 @@ class Visit(models.Model):
         _("First Visited"),
         auto_now_add=True,
     )
-    updated = models.DateTimeField(
-        _("Last Visited"),
-        auto_now=True,
-    )
+    # updated = models.DateTimeField(
+    #     _("Last Visited"),
+    #     auto_now=True,
+    # )
 
 
 class PageVisit(Visit):
@@ -119,17 +119,4 @@ class SiteVisit(Visit):
         verbose_name_plural = _('Website Visit Counts')
 
 
-"""
-# will need that later if wanna track country city etc.
-def ip_location_lookup(ip, kind, lookup):
-    try:
-        return lookup[ip]
-    except:
-        g = GeoIP2()
-        try:
-            attr = {"country_name": g.country, "city": g.city}[kind](ip)[kind]
-        except: attr = "Unknown"
-        lookup[ip] = attr
-        return attr
-"""
 

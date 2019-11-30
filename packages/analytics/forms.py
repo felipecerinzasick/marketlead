@@ -31,7 +31,7 @@ class PageForm(forms.ModelForm):
         if client or page_url:
             client_url_parsed = urlparse(client.url)
             page_url_parsed = urlparse(page_url)
-            if page_url_parsed.netloc != client_url_parsed.netloc:
+            if page_url_parsed.hostname != client_url_parsed.hostname:
                 self.add_error('url', "Page domain is not matched with client's domain")
 
         return self.cleaned_data

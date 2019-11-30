@@ -1,8 +1,8 @@
 'use strict';
 
 // Make the actual CORS request.
-function makeCorsRequest(ml_key) {
-    if (!ml_key) {
+function mcr(track_id) {
+    if (!track_id) {
         console.error("Undefined ML key!");
     }
 
@@ -10,7 +10,7 @@ function makeCorsRequest(ml_key) {
     const presentable_data = {
         url: window.location.href,
         origin: window.location.origin,
-        key: ml_key,
+        track_id: track_id,
     }
     const url = 'https://actstylo.ngrok.io/traffic/?json=' + encodeURIComponent(JSON.stringify(presentable_data));
 

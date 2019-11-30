@@ -12,7 +12,8 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import ClientForm, PageForm
-from .models import Client, Page, Visit
+from .models import Client, Page, PageVisit, SiteVisit
+from .utils import ip_from_request, stripped_scheme_url
 
 
 @login_required
@@ -113,13 +114,54 @@ class TrafficCounter(View):
         return super(TrafficCounter, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
+        ip_address = ip_from_request(request)
         json_str = request.GET.get('json')
+        try:
+            json_obj = json.loads(json_str)
+            keys_list = ('url', 'origin', 'track_id')
+            if set(keys_list).issubset(json_obj):
+                track_id = json_obj.get('track_id')
+                url = json_obj.get('url')
+                host_url = json_obj.get('origin')
+                try:
+                    site = Client.objects.get(track_id=track_id)
 
-        for k, v in (json.loads(json_str)).items():
-            print("data=>   {}:{}".format(k, v))
+                    if stripped_scheme_url(site.url) != stripped_scheme_url(host_url):
+                        return JsonResponse({
+                            "success": False,
+                            "error": {
+                                "message": "URL is not registered"
+                            }
+                        })
+                    else:
+                        site.is_verified = True
+                        site.save()
+                    try:
+                        PageVisit.objects.create(
+                            page=Page.objects.get(url__endswith=stripped_scheme_url(url)),
+                            ip_addr=ip_address,
+                        )
+                    except Page.DoesNotExist:
+                        # add site visit if not page
+                        SiteVisit.objects.create(
+                            site=site,
+                            ip_addr=ip_address
+                        )
+                except Client.DoesNotExist:
+                    return JsonResponse({
+                        "success": True,
+                    })
+        except json.JSONDecodeError:
+            return JsonResponse({
+                "success": False,
+                "error": {
+                    "message": "Error data",
+                }
+            })
+
 
         return JsonResponse({
-            "Gg": 1
+            "success": True,
         })
 
     def post(self, request, *args, **kwargs):
