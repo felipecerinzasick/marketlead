@@ -1,3 +1,5 @@
+import datetime
+
 from urllib.parse import urlparse
 
 from django.db import models
@@ -37,6 +39,11 @@ class Client(models.Model):
     def __str__(self):
         return self.domain
 
+    def get_visit_count_by_day(self, day=7):
+        time_now = datetime.datetime.now()
+        from_date = time_now - datetime.timedelta(days=day)
+        return self.sitevisit_set.filter(created__range=[from_date, time_now]).count()
+
 
 class Page(models.Model):
     host = models.ForeignKey(
@@ -61,13 +68,20 @@ class Page(models.Model):
                 raise KeyError("Page domain is not matched with client's domain")
         super(Page, self).save(*args, **kwargs)
 
+    def get_visit_count_by_day(self, day=7):
+        time_now = datetime.datetime.now()
+        from_date = time_now - datetime.timedelta(days=day)
+        return self.pagevisit_set.filter(created__range=[from_date, time_now]).count()
+
+    def get_bounce_rate_by_day(self, day=7):
+        if self.host.get_visit_count_by_day(day) == 0:
+            return '0%'
+        return "{}%".format(
+            (self.get_visit_count_by_day(day) / self.host.get_visit_count_by_day(day))*100
+        )
+
 
 class Visit(models.Model):
-    page = models.ForeignKey(
-        Page,
-        on_delete=models.CASCADE,
-    )
-
     ip_addr = models.CharField(
         _("IP Address"),
         max_length=64,
@@ -82,9 +96,27 @@ class Visit(models.Model):
         auto_now=True,
     )
 
+
+class PageVisit(Visit):
+    page = models.ForeignKey(
+        Page,
+        on_delete=models.CASCADE,
+    )
+
     class Meta:
         verbose_name = _('Page Visit Count')
         verbose_name_plural = _('Page Visit Counts')
+
+
+class SiteVisit(Visit):
+    site = models.ForeignKey(
+        Client,
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        verbose_name = _('Website Visit Count')
+        verbose_name_plural = _('Website Visit Counts')
 
 
 """

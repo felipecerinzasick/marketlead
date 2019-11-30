@@ -42,6 +42,10 @@ class SingleCampaignView(LoginRequiredMixin, DetailView):
     template_name = 'analytics/campaign/single.html'
 
 
+class SingleCampaignAllPagesView(SingleCampaignView):
+    template_name = 'analytics/campaign/all-pages.html'
+
+
 class EditCampaignView(LoginRequiredMixin, UpdateView):
     model = Client
     form_class = ClientForm
