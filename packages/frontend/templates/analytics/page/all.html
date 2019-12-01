@@ -21,9 +21,10 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Page Name</th>
-                        <th scope="col">Page URL</th>
+                        <th scope="col">Keyword (for page only)</th>
                         <th scope="col">Host URL</th>
                         <th scope="col">Site Verified?</th>
+                        <th scope="col">View?</th>
                         <th scope="col">Edit?</th>
                     </tr>
                 </thead>
@@ -32,11 +33,12 @@
                         <tr>
                             <td>{{ forloop.counter }}</td>
                             <td>{{ page.name }}</td>
-                            <td><a target="_blank" href="{{ page.url }}">{{ page.url }}</a></td>
+                            <td>{{ page.keyword }}</td>
                             <td><a target="_blank" href="{{ page.host.url }}">{{ page.host.url }}</a></td>
                             <td>
                                 {% if page.site.is_verified %}<i class="fas fa-check-circle text-success"></i> {% else %}<i class="fas fa-times-circle text-danger"></i>{% endif %}
                             </td>
+                            <td><a href="{% url 'analytics:view-campaign-page' page.pk %}">View</a></td>
                             <td><a href="{% url 'analytics:edit-campaign-page' page.pk %}">Edit</a></td>
                         </tr>
                     {% endfor %}

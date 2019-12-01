@@ -27,4 +27,6 @@ def ip_from_request(request):
 
 def stripped_scheme_url(url):
     parsed_url = urlparse(url)
+    if parsed_url.path == '/':
+        return parsed_url.hostname
     return parsed_url.hostname + parsed_url.path

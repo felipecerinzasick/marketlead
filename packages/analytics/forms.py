@@ -22,16 +22,3 @@ class PageForm(forms.ModelForm):
         model = Page
         fields = '__all__'
 
-    def clean(self):
-        # check client host and page host before saving
-        cleaned_data = self.cleaned_data
-        client = cleaned_data.get('host', '')
-        page_url = cleaned_data.get('url', '')
-
-        if client or page_url:
-            client_url_parsed = urlparse(client.url)
-            page_url_parsed = urlparse(page_url)
-            if page_url_parsed.hostname != client_url_parsed.hostname:
-                self.add_error('url', "Page domain is not matched with client's domain")
-
-        return self.cleaned_data

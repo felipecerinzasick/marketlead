@@ -51,22 +51,13 @@ class Page(models.Model):
         on_delete=models.CASCADE
     )
     name = models.CharField(max_length=200)
-    url = models.URLField(help_text=URL_HELP_TEXT)
+    keyword = models.CharField(max_length=50, help_text="Must be unique in same domain")
 
     class Meta:
-        unique_together = ('host', 'url',)
+        unique_together = ('host', 'keyword',)
 
     def __str__(self):
         return self.name
-
-    def save(self, *args, **kwargs):
-        # check client host and page host before saving
-        if getattr(self, 'url') and getattr(self, 'host'):
-            page_url_parsed = urlparse(self.url)
-            client_url_parsed = urlparse(self.host.url)
-            if page_url_parsed.hostname != client_url_parsed.hostname:
-                raise KeyError("Page domain is not matched with client's domain")
-        super(Page, self).save(*args, **kwargs)
 
     def get_visit_count_by_day(self, day=7):
         time_now = datetime.datetime.now()
