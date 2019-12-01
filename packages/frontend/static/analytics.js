@@ -13,7 +13,7 @@ function mcr(track_id, keyword=null) {
         track_id: track_id,
         keyword: keyword,
     }
-    const url = 'https://agile-reaches-62201.herokuapp.com//traffic/?json=' + encodeURIComponent(JSON.stringify(presentable_data));
+    const url = 'https://agile-reaches-62201.herokuapp.com/traffic/?json=' + encodeURIComponent(JSON.stringify(presentable_data));
 
     let xhr = new XMLHttpRequest();
     if ("withCredentials" in xhr) {
