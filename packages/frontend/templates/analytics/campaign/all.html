@@ -19,6 +19,7 @@
                     <th scope="col">URL</th>
                     <th scope="col">Track ID</th>
                     <th scope="col">Site Verified?</th>
+                    <th scope="col">Pages</th>
                     <th scope="col">Edit?</th>
                 </tr>
             </thead>
@@ -32,6 +33,7 @@
                         <td>
                             {% if object.is_verified %}<i class="fas fa-check-circle text-success"></i> {% else %}<i class="fas fa-times-circle text-danger"></i>{% endif %}
                         </td>
+                        <td><a href="{% url 'analytics:view-campaign-all-pages' object.pk %}">View</a></td>
                         <td><a href="{% url 'analytics:edit-campaign' object.pk %}">Edit</a></td>
                     </tr>
                 {% endfor %}
