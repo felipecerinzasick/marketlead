@@ -1,7 +1,7 @@
 'use strict';
 
 // Make the actual CORS request.
-function mcr(track_id) {
+function mcr(track_id, keyword=null) {
     if (!track_id) {
         console.error("Undefined ML key!");
     }
@@ -11,8 +11,9 @@ function mcr(track_id) {
         url: window.location.href,
         origin: window.location.origin,
         track_id: track_id,
+        keyword: keyword,
     }
-    const url = 'https://actstylo.ngrok.io/traffic/?json=' + encodeURIComponent(JSON.stringify(presentable_data));
+    const url = 'https://agile-reaches-62201.herokuapp.com//traffic/?json=' + encodeURIComponent(JSON.stringify(presentable_data));
 
     let xhr = new XMLHttpRequest();
     if ("withCredentials" in xhr) {

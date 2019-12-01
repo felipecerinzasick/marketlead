@@ -118,11 +118,11 @@ class TrafficCounter(View):
         json_str = request.GET.get('json')
         try:
             json_obj = json.loads(json_str)
-            keys_list = ('url', 'origin', 'track_id')
+            keys_list = ('origin', 'track_id')
             if set(keys_list).issubset(json_obj):
                 track_id = json_obj.get('track_id')
-                url = json_obj.get('url')
                 host_url = json_obj.get('origin')
+                kw = json_obj.get('keyword')
                 try:
                     site = Client.objects.get(track_id=track_id)
 
@@ -136,17 +136,24 @@ class TrafficCounter(View):
                     else:
                         site.is_verified = True
                         site.save()
-                    try:
-                        PageVisit.objects.create(
-                            page=Page.objects.get(url__endswith=stripped_scheme_url(url)),
-                            ip_addr=ip_address,
-                        )
-                    except Page.DoesNotExist:
-                        # add site visit if not page
                         SiteVisit.objects.create(
                             site=site,
-                            ip_addr=ip_address
+                            ip_addr=ip_address,
                         )
+                    if kw:
+                        try:
+                            pg = Page.objects.get(keyword=kw)
+                            PageVisit.objects.create(
+                                page=pg,
+                                ip_addr=ip_address,
+                            )
+                        except Page.DoesNotExist:
+                            return JsonResponse({
+                                "success": True,
+                                "error": {
+                                    "message": "Keywords doesn't match",
+                                }
+                            })
                 except Client.DoesNotExist:
                     return JsonResponse({
                         "success": True,
