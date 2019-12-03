@@ -1,9 +1,8 @@
 import datetime
 
-from urllib.parse import urlparse
-
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -40,7 +39,7 @@ class Client(models.Model):
         return self.domain
 
     def get_visit_count_by_day(self, day=7):
-        time_now = datetime.datetime.now()
+        time_now = datetime.datetime.now(tz=timezone.utc)
         from_date = time_now - datetime.timedelta(days=day)
         return self.sitevisit_set.filter(created__range=[from_date, time_now]).count()
 
@@ -60,16 +59,24 @@ class Page(models.Model):
         return self.name
 
     def get_visit_count_by_day(self, day=7):
-        time_now = datetime.datetime.now()
+        time_now = datetime.datetime.now(tz=timezone.utc)
         from_date = time_now - datetime.timedelta(days=day)
         return self.pagevisit_set.filter(created__range=[from_date, time_now]).count()
 
     def get_bounce_rate_by_day(self, day=7):
-        if self.host.get_visit_count_by_day(day) == 0:
-            return '0%'
-        return "{}%".format(
-            (self.get_visit_count_by_day(day) / self.host.get_visit_count_by_day(day))*100
-        )
+        parent_page = self
+        for pg in Page.objects.filter(host=self.host).order_by('id'):
+            if pg == self:
+                break
+            parent_page = pg
+        parent_page_visit = parent_page.pagevisit_set.count()
+        this_page_visit = self.pagevisit_set.count()
+        if parent_page == self or parent_page_visit < this_page_visit:
+            return '100%'
+        ptg = "{0:.2f}".format(100 * this_page_visit/parent_page_visit)
+        if ptg[-2:] == '00':    # remove 00 after point (if whole number)
+            ptg = ptg[:-3]
+        return "{}%".format(ptg)
 
 
 class Visit(models.Model):
