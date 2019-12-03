@@ -1,5 +1,11 @@
 {% extends 'analytics/base.html' %}
 
+{% load static %}
+
+{% block head_xtra_css %}
+    <link href="{% static 'main/css/monokai.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+
 {% block dashboard_heading %}
     <header class="d-flex">
         <span>Campaign</span>
@@ -11,20 +17,47 @@
     <div class="d-flex flex-column">
         <h2 class="mx-auto" style="margin-top: 10%">Pass the following code into the header of every site that you want to display.  </h2>
         <div class="d-flex justify-content-center">
-            <code class="bg-dark py-3 px-5">
-                <xmp>
-<!-- MarketLear Tracker -->
-<script>
-((e,t,n,o)=>new Promise((e,o)=>{let r=t.createElement(n),a=t.getElementsByTagName(n)[0];
-r.async=1,r.src="https://agile-reaches-62201.herokuapp.com/static/analytics.js",r.onload=e,r.onerror=o,
-a.parentNode.insertBefore(r,a)}))(window,document,"script").then(function(){mcr("<your TRACK-ID>", "<Page keyword>")});
-</script>
-<!-- MarketLear Tracker -->
-                </xmp>
-            </code>
+            <pre>
+                <code id="for-clipboard" data-language="html">
+  <!-- MarketLear Tracker -->
+  <script>
+  ((e,t,n,o)=>new Promise((e,o)=>{let r=t.createElement(n),
+  a=t.getElementsByTagName(n)[0];
+  r.async=1,r.src="https://agile-reaches-62201.herokuapp.com/static/analytics.js",
+  r.onload=e,r.onerror=o,a.parentNode.insertBefore(r,a)}))(window,document,"script").then(
+  function(){mcr("{{ tid|default:"<YOUR TRACK ID>" }}", "{{ kw|default:"<Page keyword>" }}")});
+  </script>
+  <!-- MarketLear Tracker -->
+                </code>
+            </pre>
         </div>
+        <button class="btn btn-light border border-secondary align-self-center" data-toggle="tooltip" data-placement="left" title="Click to copy" onclick="copy_to_clipboard()">Copy to clipboard</button>
         <div class="text-center mt-4">
-            <a href="{% url 'analytics:new-campaign' %}" class="btn btn-ml">Get Track ID</a>
+            <a href="{% url 'analytics:report' %}" class="btn btn-ml">View Reports</a>
         </div>
     </div>
 {% endblock %}
+
+{% block footer_extra_js %}
+    <script src="{% static 'main/js/rainbow.min.js' %}"></script>
+    <script>
+        function copy_to_clipboard() {
+            let copyText = document.getElementById("for-clipboard"),
+                textArea = document.createElement("textarea");
+            textArea.value = copyText.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            textArea.setSelectionRange(0, 99999);  // For mobile devices
+
+            try {
+                document.execCommand("copy");
+                textArea.remove();
+                alert("Code copied!\nPaste the copied html in <head> tag");
+            } catch (e) {
+                alert("Cannot copy text !");
+                textArea.remove();
+            }
+        }
+    </script>
+{% endblock %}
+

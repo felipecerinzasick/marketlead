@@ -7,26 +7,14 @@
                 </a>
             </li>
             <li>
-                <a href="{% url 'analytics:add-code' %}" class="text-white d-inline-block p-2 mb-1">
+                <a href="{% url 'analytics:new-page' %}" class="text-white d-inline-block p-2 mb-1">
                     <i class="fas fa-receipt"></i>
                 </a>
             </li>
             <li>
-                <a href="#" class="text-white d-inline-block p-2 mb-1">
+                <a href="{% url 'analytics:report' %}" class="text-white d-inline-block p-2 mb-1">
                     <i class="fas fa-clipboard"></i>
                 </a>
-            </li>
-            <li class="border-bottom py-2">
-                <a class="text-white" href="{% url 'analytics:all-campaign' %}">all site</a>
-            </li>
-            <li class="border-bottom py-2">
-                <a class="text-white" href="{% url 'analytics:new-campaign' %}">new site</a>
-            </li>
-            <li class="border-bottom py-2">
-                <a class="text-white" href="{% url 'analytics:all-campaign-page' %}">all pages</a>
-            </li>
-            <li class="border-bottom py-2">
-                <a class="text-white" href="{% url 'analytics:new-campaign-page' %}">new page</a>
             </li>
         </ul>
     </nav>

@@ -1,11 +1,10 @@
 import json
 
-from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.shortcuts import render, reverse, get_object_or_404
+from django.shortcuts import redirect, reverse, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic.base import View
+from django.views.generic.base import View, TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView
@@ -16,14 +15,15 @@ from .models import Client, Page, PageVisit, SiteVisit
 from .utils import ip_from_request, stripped_scheme_url
 
 
-@login_required
-def home(request):
-    return render(request, 'analytics/home.html')
+class HomeView(LoginRequiredMixin, TemplateView):
+    template_name = 'analytics/home.html'
 
-
-@login_required
-def add_code_to_site(request):
-    return render(request, 'analytics/add-code-to-site.html')
+    def dispatch(self, request, *args, **kwargs):
+        client = Client.objects.filter(user=request.user).last()
+        if not client:
+            return redirect('analytics:new-campaign')
+        else:
+            return super().dispatch(request, *args, **kwargs)
 
 
 class NewCampaignView(LoginRequiredMixin, CreateView):
@@ -35,7 +35,68 @@ class NewCampaignView(LoginRequiredMixin, CreateView):
         return self.initial
 
     def get_success_url(self):
-        return reverse('analytics:view-campaign', kwargs={'pk': self.object.pk})
+        return reverse('analytics:new-page')
+
+    def dispatch(self, request, *args, **kwargs):
+        self.queryset = Client.objects.filter(user=request.user).last()
+        if self.queryset:
+            return redirect('analytics:home')
+        else:
+            return super().dispatch(request, *args, **kwargs)
+
+
+class NewPageView(LoginRequiredMixin, CreateView):
+    form_class = PageForm
+    template_name = 'analytics/page/form.html'
+    client_obj = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.client_obj = Client.objects.filter(user=request.user).last()
+        if not self.client_obj:
+            return redirect('analytics:new-campaign')
+        else:
+            return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        if not self.client_obj:
+            return redirect('analytics:new-campaign')
+        form.instance.host = self.client_obj
+        self.success_url = "{}?{}={}".format(
+            reverse('analytics:copy-code'),
+            'kw', form.instance.keyword
+        )
+        return super().form_valid(form)
+
+
+class CopyJsCode(HomeView, TemplateView):
+    template_name = 'analytics/add-code-to-site.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        client_obj = Client.objects.filter(user=request.user).last()
+        if not client_obj:
+            return redirect('analytics:new-campaign')
+        if self.extra_context is None:
+            self.extra_context = {}
+        self.extra_context['tid'] = client_obj.track_id
+        keyword = request.GET.get('kw')
+        if keyword:
+            self.extra_context['kw'] = keyword
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs)
+
+
+class AllPageView(LoginRequiredMixin, ListView):
+    model = Page
+    template_name = 'analytics/page/all.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        client = Client.objects.filter(user=request.user).last()
+        if not client:
+            return redirect('analytics:new-campaign')
+        self.queryset = Page.objects.filter(host=client)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class SingleCampaignView(LoginRequiredMixin, DetailView):
@@ -111,7 +172,7 @@ class TrafficCounter(View):
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
-        return super(TrafficCounter, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         ip_address = ip_from_request(request)
@@ -170,11 +231,4 @@ class TrafficCounter(View):
         return JsonResponse({
             "success": True,
         })
-
-    def post(self, request, *args, **kwargs):
-        print("POST: {}".format(request.POST))
-        return JsonResponse({
-            "pP": 1000
-        })
-
 

@@ -1,5 +1,4 @@
 import secrets
-from urllib.parse import urlparse
 
 from django import forms
 
@@ -21,4 +20,8 @@ class PageForm(forms.ModelForm):
     class Meta:
         model = Page
         fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(PageForm, self).__init__(*args, **kwargs)
+        self.fields['host'].required = False
 
