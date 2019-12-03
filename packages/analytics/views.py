@@ -1,3 +1,4 @@
+import datetime
 import json
 
 from django.http import JsonResponse
@@ -179,7 +180,7 @@ class TrafficCounter(View):
         json_str = request.GET.get('json')
         try:
             json_obj = json.loads(json_str)
-            keys_list = ('origin', 'track_id')
+            keys_list = ('origin', 'track_id', 'keyword')
             if set(keys_list).issubset(json_obj):
                 track_id = json_obj.get('track_id')
                 host_url = json_obj.get('origin')
@@ -197,17 +198,23 @@ class TrafficCounter(View):
                     else:
                         site.is_verified = True
                         site.save()
-                        SiteVisit.objects.create(
+                        sv_obj, sv_created = SiteVisit.objects.get_or_create(
                             site=site,
                             ip_addr=ip_address,
                         )
+                        if not sv_created:
+                            sv_obj.updated = datetime.datetime.now()
+                            sv_obj.save()
                     if kw:
                         try:
                             pg = Page.objects.get(keyword=kw)
-                            PageVisit.objects.create(
+                            pv_obj, pv_created = PageVisit.objects.get_or_create(
                                 page=pg,
                                 ip_addr=ip_address,
                             )
+                            if not pv_created:
+                                pv_obj.updated = datetime.datetime.now()
+                                pv_obj.save()
                         except Page.DoesNotExist:
                             return JsonResponse({
                                 "success": True,

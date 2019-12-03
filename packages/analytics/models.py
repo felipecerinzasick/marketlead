@@ -82,10 +82,10 @@ class Visit(models.Model):
         _("First Visited"),
         auto_now_add=True,
     )
-    # updated = models.DateTimeField(
-    #     _("Last Visited"),
-    #     auto_now=True,
-    # )
+    updated = models.DateTimeField(
+        _("Last Visited"),
+        auto_now=True,
+    )
 
 
 class PageVisit(Visit):

@@ -27,6 +27,7 @@ def ip_from_request(request):
 
 def stripped_scheme_url(url):
     parsed_url = urlparse(url)
+    domain = str(parsed_url.hostname).replace('www.', '')  # ignored www match
     if parsed_url.path == '/':
-        return parsed_url.hostname
-    return parsed_url.hostname + parsed_url.path
+        return domain
+    return domain + str(parsed_url.path)
