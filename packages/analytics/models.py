@@ -64,16 +64,19 @@ class Page(models.Model):
         return self.pagevisit_set.filter(created__range=[from_date, time_now]).count()
 
     def get_bounce_rate_by_day(self, day=7):
-        parent_page = self
-        for pg in Page.objects.filter(host=self.host).order_by('id'):
+        next_page = None
+        for pg in Page.objects.filter(host=self.host).order_by('-id'):
             if pg == self:
                 break
-            parent_page = pg
-        parent_page_visit = parent_page.pagevisit_set.count()
+            next_page = pg
+        if next_page is None:
+            return "-"  # no bounce rate for last page
+        next_page_visit = next_page.pagevisit_set.count()
         this_page_visit = self.pagevisit_set.count()
-        if parent_page == self or parent_page_visit < this_page_visit:
+
+        if this_page_visit < next_page_visit:
             return '100%'
-        ptg = "{0:.2f}".format(100 * this_page_visit/parent_page_visit)
+        ptg = "{0:.2f}".format(100 * next_page_visit/this_page_visit)
         if ptg[-2:] == '00':    # remove 00 after point (if whole number)
             ptg = ptg[:-3]
         return "{}%".format(ptg)
