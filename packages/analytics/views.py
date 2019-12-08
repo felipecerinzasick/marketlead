@@ -9,6 +9,7 @@ from django.views.generic.base import View, TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import ClientForm, PageForm
@@ -16,6 +17,7 @@ from .models import Client, Page, PageVisit, SiteVisit
 from .utils import ip_from_request, stripped_scheme_url
 
 
+@method_decorator([login_required, ], name='dispatch')
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = 'analytics/home.html'
 
@@ -27,6 +29,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
             return super().dispatch(request, *args, **kwargs)
 
 
+@method_decorator([login_required, ], name='dispatch')
 class NewCampaignView(LoginRequiredMixin, CreateView):
     form_class = ClientForm
     template_name = 'analytics/campaign/form.html'
@@ -46,6 +49,7 @@ class NewCampaignView(LoginRequiredMixin, CreateView):
             return super().dispatch(request, *args, **kwargs)
 
 
+@method_decorator([login_required, ], name='dispatch')
 class NewPageView(LoginRequiredMixin, CreateView):
     form_class = PageForm
     template_name = 'analytics/page/form.html'
@@ -88,6 +92,7 @@ class CopyJsCode(HomeView, TemplateView):
         return super().get_context_data(**kwargs)
 
 
+@method_decorator([login_required, ], name='dispatch')
 class AllPageView(LoginRequiredMixin, ListView):
     model = Page
     template_name = 'analytics/page/all.html'
@@ -100,15 +105,18 @@ class AllPageView(LoginRequiredMixin, ListView):
         return super().dispatch(request, *args, **kwargs)
 
 
+@method_decorator([login_required, ], name='dispatch')
 class SingleCampaignView(LoginRequiredMixin, DetailView):
     model = Client
     template_name = 'analytics/campaign/single.html'
 
 
+@method_decorator([login_required, ], name='dispatch')
 class SingleCampaignAllPagesView(SingleCampaignView):
     template_name = 'analytics/campaign/all-pages.html'
 
 
+@method_decorator([login_required, ], name='dispatch')
 class EditCampaignView(LoginRequiredMixin, UpdateView):
     model = Client
     form_class = ClientForm
@@ -123,11 +131,13 @@ class EditCampaignView(LoginRequiredMixin, UpdateView):
         return reverse('analytics:view-campaign', kwargs={'pk': self.object.pk})
 
 
+@method_decorator([login_required, ], name='dispatch')
 class AllCampaignView(LoginRequiredMixin, ListView):
     model = Client
     template_name = 'analytics/campaign/all.html'
 
 
+@method_decorator([login_required, ], name='dispatch')
 class NewCampaignPageView(LoginRequiredMixin, CreateView):
     form_class = PageForm
     template_name = 'analytics/page/form.html'
@@ -144,11 +154,13 @@ class NewCampaignPageByClientView(NewCampaignPageView):
         return context
 
 
+@method_decorator([login_required, ], name='dispatch')
 class SingleCampaignPageView(LoginRequiredMixin, DetailView):
     model = Page
     template_name = 'analytics/page/single.html'
 
 
+@method_decorator([login_required, ], name='dispatch')
 class EditCampaignPageView(LoginRequiredMixin, UpdateView):
     model = Page
     form_class = PageForm
@@ -163,15 +175,16 @@ class EditCampaignPageView(LoginRequiredMixin, UpdateView):
         return reverse('analytics:view-campaign-page', kwargs={'pk': self.object.pk})
 
 
+@method_decorator([login_required, ], name='dispatch')
 class AllCampaignPageView(LoginRequiredMixin, ListView):
     model = Page
     template_name = 'analytics/page/all.html'
 
 
+@method_decorator([csrf_exempt, ], name='dispatch')
 class TrafficCounter(View):
     http_method_names = ['get', 'post']
 
-    @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
