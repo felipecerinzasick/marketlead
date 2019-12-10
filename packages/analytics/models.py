@@ -76,6 +76,8 @@ class Page(models.Model):
 
         if this_page_visit < next_page_visit:
             return '100%'
+        if this_page_visit == 0:
+            return '0%'
         ptg = "{0:.2f}".format(100 * next_page_visit/this_page_visit)
         if ptg[-2:] == '00':    # remove 00 after point (if whole number)
             ptg = ptg[:-3]
