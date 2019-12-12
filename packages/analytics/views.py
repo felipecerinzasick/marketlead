@@ -3,23 +3,20 @@ import json
 
 from django.http import JsonResponse
 from django.shortcuts import redirect, reverse, get_object_or_404
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import View, TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import DeleteView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import ClientForm, PageForm
 from .models import Client, Page, PageVisit, SiteVisit
 from .utils import ip_from_request, stripped_scheme_url
-
-
-# 1. Fresh
-# 2. Have site but no page
-# 3. have site have page
 
 
 @method_decorator([login_required, ], name='dispatch')
@@ -116,7 +113,19 @@ class AllPageView(LoginRequiredMixin, ListView):
         if not pages.exists():
             return redirect('analytics:new-page')
         self.queryset = pages
+        self.extra_context = {
+            "site": client,
+        }
         return super().dispatch(request, *args, **kwargs)
+
+
+@method_decorator([login_required, ], name='dispatch')
+class DeletePageView(LoginRequiredMixin, DeleteView):
+    model = Page
+    success_url = reverse_lazy('analytics:report')
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
 
 
 @method_decorator([login_required, ], name='dispatch')
@@ -189,10 +198,10 @@ class EditCampaignPageView(LoginRequiredMixin, UpdateView):
         return reverse('analytics:view-campaign-page', kwargs={'pk': self.object.pk})
 
 
-@method_decorator([login_required, ], name='dispatch')
-class AllCampaignPageView(LoginRequiredMixin, ListView):
-    model = Page
-    template_name = 'analytics/page/all.html'
+# @method_decorator([login_required, ], name='dispatch')
+# class AllCampaignPageView(LoginRequiredMixin, ListView):
+#     model = Page
+#     template_name = 'analytics/page/all.html'
 
 
 @method_decorator([csrf_exempt, ], name='dispatch')

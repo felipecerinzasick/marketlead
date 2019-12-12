@@ -2,7 +2,7 @@
 
 {% block dashboard_heading %}
     <header class="d-flex">
-        <span>Campaign</span>
+        <span>Campaign <br> <small>Site: {{ site.url }}</small></span>
         <span class="ml-auto font-weight-bold">Details</span>
     </header>
 {% endblock %}
@@ -14,10 +14,17 @@
             <div class="row w-100">
                 {% for pg in object_list %}
                     <div class="col">
-                        <div class="border border-dark">
-                            <h3>{{ pg.name }}</h3>
-                            <p>{{ pg.get_visit_count_by_day }}</p>
-                            <p>Bounce rate: {{ pg.get_bounce_rate_by_day }}</p>
+                        <div class="card border-dark">
+                            <div class="card-header alert-dismissible">
+                                <h3>{{ pg.name }}</h3>
+                                <a href="{% url 'analytics:delete-page' pg.pk %}" class="close">
+                                    <span aria-hidden="true">&times;</span>
+                                </a>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">Page visit: {{ pg.get_visit_count_by_day }}</li>
+                                <li class="list-group-item">Bounce rate: {{ pg.get_bounce_rate_by_day }}</li>
+                            </ul>
                         </div>
                     </div>
                 {% endfor %}
