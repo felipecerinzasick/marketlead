@@ -17,16 +17,26 @@ from .models import Client, Page, PageVisit, SiteVisit
 from .utils import ip_from_request, stripped_scheme_url
 
 
+# 1. Fresh
+# 2. Have site but no page
+# 3. have site have page
+
+
 @method_decorator([login_required, ], name='dispatch')
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = 'analytics/home.html'
 
     def dispatch(self, request, *args, **kwargs):
-        client = Client.objects.filter(user=request.user).last()
-        if not client:
-            return redirect('analytics:new-campaign')
-        else:
+        website = Client.objects.filter(user=request.user)
+        if not website.exists():
+            # fresh user
             return super().dispatch(request, *args, **kwargs)
+        client = website.last()
+        if not Page.objects.filter(host=client).exists():
+            # registered website but no page
+            return redirect('analytics:new-page')
+        # have website and page
+        return redirect('analytics:report')
 
 
 @method_decorator([login_required, ], name='dispatch')
@@ -98,10 +108,14 @@ class AllPageView(LoginRequiredMixin, ListView):
     template_name = 'analytics/page/all.html'
 
     def dispatch(self, request, *args, **kwargs):
-        client = Client.objects.filter(user=request.user).last()
-        if not client:
+        website = Client.objects.filter(user=request.user)
+        if not website.exists():
             return redirect('analytics:new-campaign')
-        self.queryset = Page.objects.filter(host=client)
+        client = website.last()
+        pages = Page.objects.filter(host=client).order_by('id')
+        if not pages.exists():
+            return redirect('analytics:new-page')
+        self.queryset = pages
         return super().dispatch(request, *args, **kwargs)
 
 
