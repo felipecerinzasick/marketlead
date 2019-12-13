@@ -42,7 +42,7 @@ class NewCampaignView(LoginRequiredMixin, CreateView):
     template_name = 'analytics/campaign/form.html'
 
     def get_initial(self):
-        self.initial.update({'user': self.request.user })
+        self.initial.update({'user': self.request.user, })
         return self.initial
 
     def get_success_url(self):
@@ -80,7 +80,8 @@ class NewPageView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class CopyJsCode(HomeView, TemplateView):
+@method_decorator([login_required, ], name='dispatch')
+class CopyJsCode(LoginRequiredMixin, TemplateView):
     template_name = 'analytics/add-code-to-site.html'
 
     def dispatch(self, request, *args, **kwargs):
