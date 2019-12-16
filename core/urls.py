@@ -28,6 +28,7 @@ urlpatterns = [
     path('login/', login_view, name='login'),
     path('sign-up/', signup_view, name='sign-up'),
     path('logout/', logout_view, name='logout'),
+    path('social/', include('social_django.urls', namespace='social')),
     path('user/', include('ml_user.urls', namespace='user-auth')),
     path('admin/', admin.site.urls),
 ]
