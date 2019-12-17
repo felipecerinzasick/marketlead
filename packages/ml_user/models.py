@@ -48,7 +48,7 @@ class User(AbstractUser):
 
     # username will no longer be a required field
     username = models.CharField(
-        max_length=10,
+        max_length=255,
         blank=True, null=True
     )
 
