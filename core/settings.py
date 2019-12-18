@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'ml_user',
     'analytics',
     'frontend',
+    'fb_api',
 ]
 
 MIDDLEWARE = [
