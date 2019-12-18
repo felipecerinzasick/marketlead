@@ -12,7 +12,14 @@
             <a class="navbar-brand" href="{% url 'analytics:new-campaign' %}">MarketLead</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu-top"><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="main-menu-top">
-                <div class="dropdown ml-auto">
+                <div class="ml-auto">
+                    {% if is_fb_connected %}
+                        <span class="fb_login_button fb_connected">Connected</span>
+                    {% else %}
+                        <a href="{% url "social:begin" "facebook" %}" class="fb_login_button">Connect Facebook</a>
+                    {% endif %}
+                </div>
+                <div class="dropdown ml-3">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-user"></i>
                     </button>

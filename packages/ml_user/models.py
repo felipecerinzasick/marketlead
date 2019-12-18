@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.core.exceptions import MultipleObjectsReturned
+from social_django.models import UserSocialAuth
 
 
 class UserManager(BaseUserManager):
@@ -67,4 +69,13 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+
+    def get_social_auth_obj(self):
+        try:
+            return UserSocialAuth.objects.get(user=self)
+        except UserSocialAuth.DoesNotExist:
+            pass
+        except MultipleObjectsReturned:
+            pass
+        return None
 

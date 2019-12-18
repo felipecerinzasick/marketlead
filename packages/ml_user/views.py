@@ -5,14 +5,17 @@ from django.contrib.auth import (
     login as django_login,
     logout as django_logout,
 )
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import (PasswordResetView, PasswordResetDoneView,
                                        PasswordResetConfirmView, PasswordResetCompleteView)
-from django.http import Http404, HttpResponse, HttpResponseForbidden
+from django.http import Http404, HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, redirect, reverse
 from django.urls import NoReverseMatch, reverse_lazy
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 from .emails import EmailFromTemplate
 from .forms import EmailLoginForm, RegistrationForm
@@ -169,3 +172,21 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 class CustomPasswordResetSuccessView(PasswordResetCompleteView):
     title = 'Password reset complete'
     template_name = 'users/password/reset-complete.html'
+
+
+@method_decorator([login_required, ], name='dispatch')
+class GetFbAccessToken(View):
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        if user.is_authenticated():
+            usa = user.get_social_auth_obj()
+            if usa:
+                access_token = usa.extra_data.get('access_token')
+                if access_token:
+                    return JsonResponse({
+                        "success": True,
+                        "access_token": access_token
+                    })
+        return JsonResponse({
+            "success": False,
+        })
