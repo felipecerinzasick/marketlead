@@ -46,7 +46,7 @@ class ApiParser():
             'time_increment': 1
         }
 
-    def get_ad_account(self):
+    def get_all_ad_accounts(self):
         """sample_response:: <api.Cursor> [
             <AdAccount> {
                 "account_id": "12345",

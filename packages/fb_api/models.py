@@ -2,6 +2,8 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from social_django.models import UserSocialAuth
 
+from fb_api.api_caller import ApiParser
+
 
 class FbAdAccount(models.Model):
     fb_acc = models.ForeignKey(
@@ -11,6 +13,7 @@ class FbAdAccount(models.Model):
     )
     ads_id = models.CharField(_("Ads ID"), max_length=50)
     account_id = models.CharField(_("Account ID"), max_length=30)
+    is_selected = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = _("Ad Account")
@@ -21,5 +24,10 @@ class FbAdAccount(models.Model):
 
     def get_user(self):
         return self.fb_acc.user
+
+    def get_insight_data(self, from_time, to_time):
+        access_token = self.fb_acc.extra_data.get('access_token', '')
+        fbap = ApiParser(token=access_token)
+        return fbap.get_ads_insight(self.account_id, from_time, to_time)
 
 

@@ -17,6 +17,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import ClientForm, PageForm
 from .models import Client, Page, PageVisit, SiteVisit
 from .utils import ip_from_request, stripped_scheme_url
+from fb_api.models import FbAdAccount
+from fb_api.api_caller import ApiParser
 
 
 @method_decorator([login_required, ], name='dispatch')
@@ -102,11 +104,13 @@ class CopyJsCode(LoginRequiredMixin, TemplateView):
 
 @method_decorator([login_required, ], name='dispatch')
 class AllPageView(LoginRequiredMixin, ListView):
+    """Report Page"""
     model = Page
     template_name = 'analytics/page/all.html'
 
     def dispatch(self, request, *args, **kwargs):
-        website = Client.objects.filter(user=request.user)
+        user_obj = request.user
+        website = Client.objects.filter(user=user_obj)
         if not website.exists():
             return redirect('analytics:new-campaign')
         client = website.last()
@@ -117,7 +121,45 @@ class AllPageView(LoginRequiredMixin, ListView):
         self.extra_context = {
             "site": client,
         }
+        fb_acc = user_obj.get_social_auth_obj()
+        if fb_acc:
+            fbad_accounts = FbAdAccount.objects.filter(fb_acc=fb_acc)
+            if fbad_accounts.exists():
+                self.extra_context.update({
+                    "ad_accounts": fbad_accounts,
+                    "selected_ad_acc": fbad_accounts.filter(is_selected=True).first()
+                })
+            else:
+                ap = ApiParser(user_obj.get_access_token())
+                acc_data = ap.get_all_ad_accounts()
+                for item in acc_data:
+                    FbAdAccount.objects.create(fb_acc=fb_acc, ads_id=item.get('id', ''), account_id=item.get('account_id', ''))
+                self.extra_context.update({
+                    "ad_accounts": FbAdAccount.objects.filter(fb_acc=fb_acc),
+                    "selected_ad_acc": None
+                })
         return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        adac = request.GET.get('ad_account')
+        if adac:
+            user_obj = request.user
+            fb_acc = user_obj.get_social_auth_obj()
+            if fb_acc:
+                fbad_accounts = FbAdAccount.objects.filter(fb_acc=fb_acc)
+                if fbad_accounts.exists():
+                    try:
+                        selected_fbadac = FbAdAccount.objects.get(fb_acc=fb_acc, account_id=adac)
+                        for fbac in fbad_accounts:
+                            if fbac is not selected_fbadac:
+                                fbac.is_selected = False
+                                fbac.save()
+                        selected_fbadac.is_selected = True
+                        selected_fbadac.save()
+                        return redirect('analytics:report')
+                    except FbAdAccount.DoesNotExist:
+                        pass
+        return super().get(request, *args, **kwargs)
 
 
 @method_decorator([login_required, ], name='dispatch')
@@ -197,12 +239,6 @@ class EditCampaignPageView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse('analytics:view-campaign-page', kwargs={'pk': self.object.pk})
-
-
-# @method_decorator([login_required, ], name='dispatch')
-# class AllCampaignPageView(LoginRequiredMixin, ListView):
-#     model = Page
-#     template_name = 'analytics/page/all.html'
 
 
 @method_decorator([csrf_exempt, ], name='dispatch')

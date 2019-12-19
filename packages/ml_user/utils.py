@@ -21,12 +21,3 @@ def allowed_post_only(func):
     return decorated
 
 
-def get_access_token_by_user(user_obj):
-    if user_obj.is_authenticated:
-        usa = user_obj.get_social_auth_obj()
-        if usa:
-            access_token = usa.extra_data.get('access_token')
-            if access_token:
-                return access_token
-    return None
-

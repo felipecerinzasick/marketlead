@@ -79,3 +79,12 @@ class User(AbstractUser):
             pass
         return None
 
+    def get_access_token(self):
+        if self.is_authenticated:
+            usa = self.get_social_auth_obj()
+            if usa:
+                access_token = usa.extra_data.get('access_token')
+                if access_token:
+                    return access_token
+        return ''
+

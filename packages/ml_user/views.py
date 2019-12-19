@@ -21,7 +21,7 @@ from .emails import EmailFromTemplate
 from .forms import EmailLoginForm, RegistrationForm
 from .models import User
 from .tokens import account_activation_token
-from .utils import get_full_url, allowed_post_only, get_access_token_by_user
+from .utils import get_full_url, allowed_post_only
 
 
 def login(request):
@@ -177,8 +177,8 @@ class CustomPasswordResetSuccessView(PasswordResetCompleteView):
 @method_decorator([login_required, ], name='dispatch')
 class GetFbAccessToken(View):
     def get(self, request, *args, **kwargs):
-        access_token = get_access_token_by_user(request.user)
-        if access_token is not None:
+        access_token = request.user.get_access_token()
+        if access_token:
             return JsonResponse({
                 "success": True,
                 "access_token": access_token
