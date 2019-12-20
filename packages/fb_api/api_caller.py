@@ -7,21 +7,34 @@ from facebookads.adobjects.adaccount import AdAccount
 from facebookads.adobjects.adsinsights import AdsInsights
 from facebookads.exceptions import FacebookRequestError
 
+from collections import Counter
+
 
 class ApiParser():
     fields = [
         AdsInsights.Field.account_currency,
+        AdsInsights.Field.account_id,
         AdsInsights.Field.campaign_id,
-        AdsInsights.Field.campaign_name,
-        AdsInsights.Field.adset_name,
-        AdsInsights.Field.ad_name,
+        # AdsInsights.Field.campaign_name,
+        # AdsInsights.Field.adset_name,
+        # AdsInsights.Field.ad_name,
         AdsInsights.Field.spend,
         AdsInsights.Field.clicks,
-        AdsInsights.Field.cpc,
-        AdsInsights.Field.ctr,
-        AdsInsights.Field.cost_per_unique_click,
+        # AdsInsights.Field.cpc,
+        # AdsInsights.Field.ctr,
+        AdsInsights.Field.impressions,
+        # AdsInsights.Field.cost_per_unique_click,
         AdsInsights.Field.unique_clicks,
     ]
+
+    required_merged_field_list = [
+        AdsInsights.Field.spend,
+        AdsInsights.Field.clicks,
+        AdsInsights.Field.impressions,
+        AdsInsights.Field.unique_clicks,
+    ]
+    insight_data_list = []
+    final_data = {}
 
     def __init__(self, token, api_version='v5.0'):
         self.token = token
@@ -96,18 +109,35 @@ class ApiParser():
                 time.sleep(1)
                 status = async_job.remote_read()
             result = async_job.get_result()
-            ads_data_list = []
+
             for item_ad_insight in result._queue:
-                ads_data_list.append({
-                    "campaign_id": item_ad_insight.__getitem__('campaign_id'),
-                    "cost_per_unique_click": item_ad_insight.__getitem__('cost_per_unique_click'),
-                    "cpc": item_ad_insight.__getitem__('cpc'),
-                    "ctr": item_ad_insight.__getitem__('ctr'),
-                    "unique_clicks": item_ad_insight.__getitem__('unique_clicks'),
-                })
-            return ads_data_list
-        except FacebookRequestError as er:
-            print(er)
-        return []
+                temp_dict = {}
+                for _key in self.fields:
+                    try:
+                        temp_dict.update({_key: item_ad_insight.__getitem__(_key), })
+                    except KeyError:
+                        temp_dict.update({_key: '', })
+                if temp_dict:
+                    self.insight_data_list.append(temp_dict)
+            for k in self.required_merged_field_list:
+                self.final_data.update({k: self.add_value_by_key(k)})
+            if len(self.insight_data_list) > 0:
+                remaining_fields_set = set(self.fields) ^ set(self.required_merged_field_list)
+                for f in remaining_fields_set:
+                    # remaining fields has same value of all items of the list. That's why only first item is considered
+                    self.final_data.update({f: self.insight_data_list[0].get(f, '')})
+        except FacebookRequestError:
+            pass
+            # print(er)
+        return self.final_data
 
-
+    def add_value_by_key(self, _key):
+        _sum = sum((Counter({el['campaign_id']: float(el[_key])}) for el in self.insight_data_list), Counter())
+        for x in _sum.most_common():
+            try:
+                # _sum is always counter({x, y}), and y is the value, so we need the first
+                val = x[1]
+                return int(val) if val.is_integer() else val
+            except KeyError:
+                pass
+        return 0

@@ -125,9 +125,16 @@ class AllPageView(LoginRequiredMixin, ListView):
         if fb_acc:
             fbad_accounts = FbAdAccount.objects.filter(fb_acc=fb_acc)
             if fbad_accounts.exists():
+                selected_fbad_acc = fbad_accounts.filter(is_selected=True).first()
+                
+                today = datetime.date.today()
+                month_ago = today - datetime.timedelta(days=30)
+                ad_insight_data = selected_fbad_acc.get_insight_data(month_ago, today)
+
                 self.extra_context.update({
                     "ad_accounts": fbad_accounts,
-                    "selected_ad_acc": fbad_accounts.filter(is_selected=True).first()
+                    "selected_ad_acc": selected_fbad_acc,
+                    "ad_data": ad_insight_data
                 })
             else:
                 ap = ApiParser(user_obj.get_access_token())

@@ -28,6 +28,6 @@ class FbAdAccount(models.Model):
     def get_insight_data(self, from_time, to_time):
         access_token = self.fb_acc.extra_data.get('access_token', '')
         fbap = ApiParser(token=access_token)
-        return fbap.get_ads_insight(self.account_id, from_time, to_time)
+        return fbap.get_ads_insight(self.ads_id, from_time, to_time)
 
 
