@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 User = get_user_model()
+DEFAULT_DAYS_BEFORE = 30
 
 URL_HELP_TEXT = "URL must be with or without scheme (http/https)"
 
@@ -38,7 +39,7 @@ class Client(models.Model):
     def __str__(self):
         return self.domain
 
-    def get_visit_count_by_day(self, day=7):
+    def get_visit_count_by_day(self, day=DEFAULT_DAYS_BEFORE):
         time_now = datetime.datetime.now(tz=timezone.utc)
         from_date = time_now - datetime.timedelta(days=day)
         return self.sitevisit_set.filter(created__range=[from_date, time_now]).count()
@@ -58,12 +59,12 @@ class Page(models.Model):
     def __str__(self):
         return self.name
 
-    def get_visit_count_by_day(self, day=7):
+    def get_visit_count_by_day(self, day=DEFAULT_DAYS_BEFORE):
         time_now = datetime.datetime.now(tz=timezone.utc)
         from_date = time_now - datetime.timedelta(days=day)
         return self.pagevisit_set.filter(created__range=[from_date, time_now]).count()
 
-    def get_bounce_rate_by_day(self, day=7):
+    def get_bounce_rate_by_day(self, day=DEFAULT_DAYS_BEFORE):
         next_page = None
         for pg in Page.objects.filter(host=self.host).order_by('-id'):
             if pg == self:
@@ -82,6 +83,10 @@ class Page(models.Model):
         if ptg[-2:] == '00':    # remove 00 after point (if whole number)
             ptg = ptg[:-3]
         return "{}%".format(ptg)
+
+    @staticmethod
+    def calculate_cpc(cost, click):
+        return 0 if click == 0 else "{0:.2f}".format(cost / click)
 
 
 class Visit(models.Model):

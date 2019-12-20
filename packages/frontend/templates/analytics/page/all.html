@@ -1,5 +1,7 @@
 {% extends 'analytics/base.html' %}
 
+{% load ml_custom_tags %}
+
 {% block dashboard_heading %}
     <header class="d-flex">
         <span>Campaign <br> <small>Site: {{ site.url }}</small></span>
@@ -10,12 +12,26 @@
 {% block dashboard_body %}
     {% if selected_ad_acc %}
         <div>
-            Selected facebook Ad account: {{ selected_ad_acc.ads_id }}
-            <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#ad-account-selection-modal">Change</button>
+            <div>
+                Selected facebook Ad account: {{ selected_ad_acc.ads_id }}
+                <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#ad-account-selection-modal">Change</button>
+            </div>
+            {% if ad_data %}
+                <div>
+                    <p>Ad data: (for test / 30 days before from today)</p>
+                    <ul>
+                        {% for key, val in ad_data.items %}
+                            {% if val != '' %}
+                                <li><b>{{ key }}</b>: {{ val }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
         </div>
     {% endif %}
     <div class="d-flex flex-column">
-        <h2 class="mx-auto mb-4" style="margin-top: 10%">Campaign (last 7 days):</h2>
+        <h2 class="mx-auto mb-4" style="margin-top: 10%">Campaign (last 30 days):</h2>
         <div class="d-flex justify-content-center flex-column text-center">
             <div class="row w-100">
                 {% for pg in object_list %}
@@ -28,8 +44,13 @@
                                 </a>
                             </div>
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item">Page visit: {{ pg.get_visit_count_by_day }}</li>
+                                <li class="list-group-item">Visitors: {{ pg.get_visit_count_by_day }}</li>
                                 <li class="list-group-item">Bounce rate: {{ pg.get_bounce_rate_by_day }}</li>
+                                {% if forloop.first and ad_data.spend %}
+                                    <li class="list-group-item">CPC:  {% get_cpc pg ad_data.spend pg.get_visit_count_by_day %} {{ ad_data.account_currency }}</li>
+                                {% elif forloop.last and ad_data.spend %}
+                                    <li class="list-group-item">CPA:  {% get_cpc pg ad_data.spend pg.get_visit_count_by_day %} {{ ad_data.account_currency }}</li>
+                                {% endif %}
                             </ul>
                         </div>
                     </div>
