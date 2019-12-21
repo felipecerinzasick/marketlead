@@ -127,10 +127,15 @@ class AllPageView(LoginRequiredMixin, ListView):
             fbad_accounts = FbAdAccount.objects.filter(fb_acc=fb_acc)
             if fbad_accounts.exists():
                 selected_fbad_acc = fbad_accounts.filter(is_selected=True).first()
-                self.extra_context.update({
-                    "ad_accounts": fbad_accounts,
-                    "selected_ad_acc": selected_fbad_acc,
-                })
+                if not selected_fbad_acc:
+                    """
+                    Generally this is unnecessary.
+                    but if 'somehow' any ad account is not selected, this exception is required
+                    which is generally not possible
+                    """
+                    selected_fbad_acc = fbad_accounts.first()
+                    selected_fbad_acc.is_selected = True
+                    selected_fbad_acc.save()
                 created_time = datetime.datetime.now() - datetime.timedelta(minutes=settings.API_REQUEST_EXPIRE_TIME)
                 ins_data_obj = InsightData.objects.filter(created_at__gte=created_time)
                 if ins_data_obj.exists():
