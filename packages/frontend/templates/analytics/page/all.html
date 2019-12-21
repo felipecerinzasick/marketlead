@@ -16,6 +16,7 @@
                 Selected facebook Ad account: {{ selected_ad_acc.ads_id }}
                 <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#ad-account-selection-modal">Change</button>
             </div>
+            {% comment %}
             {% if ad_data %}
                 <div>
                     <p>Ad data: (for test / 30 days before from today)</p>
@@ -28,6 +29,7 @@
                     </ul>
                 </div>
             {% endif %}
+            {% endcomment %}
         </div>
     {% endif %}
     <div class="d-flex flex-column">
@@ -46,7 +48,7 @@
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">Visitors: {{ pg.get_visit_count_by_day }}</li>
                                 <li class="list-group-item">Bounce rate: {{ pg.get_bounce_rate_by_day }}</li>
-                                {% if forloop.first and ad_data.spend %}
+                                {% if not forloop.last and ad_data.spend %}
                                     <li class="list-group-item">CPC:  {% get_cpc pg ad_data.spend pg.get_visit_count_by_day %} {{ ad_data.account_currency }}</li>
                                 {% elif forloop.last and ad_data.spend %}
                                     <li class="list-group-item">CPA:  {% get_cpc pg ad_data.spend pg.get_visit_count_by_day %} {{ ad_data.account_currency }}</li>
