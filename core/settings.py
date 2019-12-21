@@ -197,6 +197,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
+# Custom project settings
+API_REQUEST_EXPIRE_TIME = 6 * 60  # in minutes
+
+
 django_heroku.settings(locals())
 
 try:

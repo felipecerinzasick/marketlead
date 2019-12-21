@@ -1,6 +1,7 @@
 import datetime
 import json
 
+from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import redirect, reverse, get_object_or_404
 from django.urls import reverse_lazy
@@ -17,7 +18,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import ClientForm, PageForm
 from .models import Client, Page, PageVisit, SiteVisit
 from .utils import ip_from_request, stripped_scheme_url
-from fb_api.models import FbAdAccount
+from fb_api.models import FbAdAccount, InsightData
 from fb_api.api_caller import ApiParser
 
 
@@ -126,15 +127,27 @@ class AllPageView(LoginRequiredMixin, ListView):
             fbad_accounts = FbAdAccount.objects.filter(fb_acc=fb_acc)
             if fbad_accounts.exists():
                 selected_fbad_acc = fbad_accounts.filter(is_selected=True).first()
-                
-                today = datetime.date.today()
-                month_ago = today - datetime.timedelta(days=30)
-                ad_insight_data = selected_fbad_acc.get_insight_data(month_ago, today)
+                self.extra_context.update({
+                    "ad_accounts": fbad_accounts,
+                    "selected_ad_acc": selected_fbad_acc,
+                })
+                created_time = datetime.datetime.now() - datetime.timedelta(minutes=settings.API_REQUEST_EXPIRE_TIME)
+                ins_data_obj = InsightData.objects.filter(created_at__gte=created_time)
+                if ins_data_obj.exists():
+                    non_expired_data = ins_data_obj.latest()
+                else:
+                    today = datetime.date.today()
+                    month_ago = today - datetime.timedelta(days=30)
+                    ad_insight_data = selected_fbad_acc.get_insight_data(month_ago, today)
+                    non_expired_data = InsightData.objects.create(
+                        ad_acc=selected_fbad_acc,
+                        data=ad_insight_data,
+                    )
 
                 self.extra_context.update({
                     "ad_accounts": fbad_accounts,
                     "selected_ad_acc": selected_fbad_acc,
-                    "ad_data": ad_insight_data
+                    "ad_data": non_expired_data.data
                 })
             else:
                 ap = ApiParser(user_obj.get_access_token())

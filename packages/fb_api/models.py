@@ -1,3 +1,4 @@
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from social_django.models import UserSocialAuth
@@ -29,5 +30,23 @@ class FbAdAccount(models.Model):
         access_token = self.fb_acc.extra_data.get('access_token', '')
         fbap = ApiParser(token=access_token)
         return fbap.get_ads_insight(self.ads_id, from_time, to_time)
+
+
+class InsightData(models.Model):
+    ad_acc = models.ForeignKey(
+        FbAdAccount,
+        on_delete=models.CASCADE,
+        verbose_name=_("Ad Account"),
+    )
+    data = JSONField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        get_latest_by = ['created_at']
+
+    def __str__(self):
+        return "{}({})".format(self.ad_acc.fb_acc.user.username or self.ad_acc.fb_acc.user.email, self.ad_acc.account_id)
+
 
 
