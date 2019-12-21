@@ -36,7 +36,9 @@ def login(request):
             email = request.POST.get('email')
             password = request.POST.get('password')
             user = authenticate(request, email=email, password=password)
-            if user is not None:
+            if not user.is_verified:
+                form.add_error(None, "Please verify your email first. Check your email spam box if you can't find it in inbox.")
+            elif user is not None and user.is_active and user.is_verified:
                 django_login(request, user)
                 if request.GET.get('next'):
                     try:
