@@ -1,4 +1,8 @@
+from django.http import HttpResponse
+from django.template.loader import get_template
+from io import BytesIO
 from urllib.parse import urlparse
+from xhtml2pdf import pisa
 
 
 IP_TRY = [
@@ -31,3 +35,14 @@ def stripped_scheme_url(url):
     if parsed_url.path == '/':
         return domain
     return domain + str(parsed_url.path)
+
+
+def render_to_pdf(template_src, context_dict={}):
+    template = get_template(template_src)
+    html = template.render(context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
+

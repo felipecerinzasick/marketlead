@@ -15,6 +15,9 @@
             <div>
                 Selected facebook Ad account: {{ selected_ad_acc.ads_id }}
                 <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#ad-account-selection-modal">Change</button>
+                <br>
+                <a href="?pdf=true" target="_blank" class="btn btn-success btn-sm">Generate pdf report</a>
+                <a href="?pdf=true&download=true" target="_blank" class="btn btn-success btn-sm">Download pdf report</a>
             </div>
             {% comment %}
             {% if ad_data %}

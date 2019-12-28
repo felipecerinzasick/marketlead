@@ -1,0 +1,42 @@
+{% load ml_custom_tags %}
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>MarketLead report</title>
+</head>
+<body>
+
+<div>
+    <ul>
+        <li>Website name: {{ pages.0.host }}</li>
+        <li>Cost per acquisition: {% get_cpc pages.last ad_data.spend pages.last.get_visit_count_by_day %} {{ ad_data.account_currency }}</li>
+    </ul>
+    {% if pages %}
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Pages</th>
+                    <th>Visitor (last 30 days)</th>
+                    <th>Bounce Rate</th>
+                    <th>Cost per click</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for page in pages %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ page.name }}</td>
+                        <td>{{ page.get_visit_count_by_day }}</td>
+                        <td>{{ page.get_bounce_rate_by_day }}</td>
+                        <td>{% get_cpc page ad_data.spend page.get_visit_count_by_day %} {{ ad_data.account_currency }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+
+</body>
+</html>

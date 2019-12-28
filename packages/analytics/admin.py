@@ -19,9 +19,12 @@ class PageAdmin(admin.ModelAdmin):
 
 @admin.register(PageVisit)
 class PageVisitAdmin(admin.ModelAdmin):
-    list_display = ["page", "ip_addr", "created", "updated",]
+    list_display = ["page", "host", "ip_addr", "created", "updated",]
     date_hierarchy = 'created'
     search_fields = ['page',]
+
+    def host(self, obj):
+        return obj.page.host.domain
 
 
 @admin.register(SiteVisit)

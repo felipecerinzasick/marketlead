@@ -2,7 +2,7 @@ import datetime
 import json
 
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import redirect, reverse, get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -17,7 +17,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import ClientForm, PageForm
 from .models import Client, Page, PageVisit, SiteVisit
-from .utils import ip_from_request, stripped_scheme_url
+from .utils import ip_from_request, stripped_scheme_url, render_to_pdf
 from fb_api.models import FbAdAccount, InsightData
 from fb_api.api_caller import ApiParser
 
@@ -137,7 +137,7 @@ class AllPageView(LoginRequiredMixin, ListView):
                     selected_fbad_acc.is_selected = True
                     selected_fbad_acc.save()
                 created_time = datetime.datetime.now() - datetime.timedelta(minutes=settings.API_REQUEST_EXPIRE_TIME)
-                ins_data_obj = InsightData.objects.filter(created_at__gte=created_time)
+                ins_data_obj = InsightData.objects.filter(ad_acc=selected_fbad_acc, created_at__gte=created_time)
                 if ins_data_obj.exists():
                     non_expired_data = ins_data_obj.latest()
                 else:
@@ -167,6 +167,7 @@ class AllPageView(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
         adac = request.GET.get('ad_account')
+        is_pdf = request.GET.get('pdf')
         if adac:
             user_obj = request.user
             fb_acc = user_obj.get_social_auth_obj()
@@ -184,6 +185,25 @@ class AllPageView(LoginRequiredMixin, ListView):
                         return redirect('analytics:report')
                     except FbAdAccount.DoesNotExist:
                         pass
+        elif is_pdf:
+            context = {
+                "pages": self.queryset,
+                "ad_data": self.extra_context.get('ad_data', {}),
+            }
+            pdf = render_to_pdf('analytics/pdf-report.html', context)
+            if pdf:
+                response = HttpResponse(pdf, content_type='application/pdf')
+                if not self.queryset.exists():
+                    filename = "Report.pdf"
+                else:
+                    filename = "Report_{}.pdf".format(self.queryset.first().host.domain)
+                content = "inline; filename='{}'".format(filename)
+                download = request.GET.get("download")
+                if download:
+                    content = "attachment; filename={}".format(filename)
+                response['Content-Disposition'] = content
+                return response
+            return HttpResponse("Not found")
         return super().get(request, *args, **kwargs)
 
 

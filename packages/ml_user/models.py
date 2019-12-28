@@ -87,6 +87,7 @@ class User(AbstractUser):
             usa = self.get_social_auth_obj()
             if usa:
                 access_token = usa.extra_data.get('access_token')
+                # todo: need to verify by facebook token tools
                 if access_token:
                     return access_token
         return ''
