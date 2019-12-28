@@ -41,13 +41,11 @@
             <div class="row">
                 {% include 'includes/analytics-sidebar.html' %}
                 <main class="col" id="bt-main" role="main">
-                    <div class="row">
-                        <div id="db-heading" class="border-bottom py-3 col-12">
-                            {% block dashboard_heading %}{% endblock %}
-                        </div>
-                        <div id="db-body" class="col-12">
-                            {% block dashboard_body %}{% endblock %}
-                        </div>
+                    <div id="db-heading" class="border-bottom py-3 col-12">
+                        {% block dashboard_heading %}{% endblock %}
+                    </div>
+                    <div id="db-body" class="col-12">
+                        {% block dashboard_body %}{% endblock %}
                     </div>
                 </main>
             </div>

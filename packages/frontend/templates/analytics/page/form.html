@@ -16,7 +16,7 @@
             {% if editing %}Edit{% else %}Create new{% endif %} Campaign Page{% if client_obj %} for <span class="text-primary">{{ client_obj.domain }}</span>{% endif %}:
         </h2>
         <div class="d-flex justify-content-center">
-            <form method="post" class="border border-dark p-4 text-right" style="width: 700px; max-width: 100%;">
+            <form method="post" class="border border-dark p-4 text-right centered-form">
                 {% csrf_token %}
             
                 {% if form.non_field_errors %}

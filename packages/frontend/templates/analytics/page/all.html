@@ -101,11 +101,11 @@
 {% endblock %}
 
 {% block footer_extra_js %}
-    <script>
-        {% if ad_accounts and not selected_ad_acc %}
+    {% if ad_accounts and not selected_ad_acc %}
+        <script>
             $(document).ready(function () {
                 $('#ad-account-selection-modal').modal('show');
             });
-        {% endif %}
-    </script>
+        </script>
+    {% endif %}
 {% endblock %}

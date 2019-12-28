@@ -11,3 +11,10 @@
     max-width: 60px;
     min-height: calc(100vh - 56px); // full height - header height
 }
+
+@media (min-width: 1024px) {
+    .centered-form {
+        width: 700px;
+        max-width: 100%;
+    }
+}
