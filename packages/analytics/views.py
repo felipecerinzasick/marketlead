@@ -108,6 +108,7 @@ class AllPageView(LoginRequiredMixin, ListView):
     """Report Page"""
     model = Page
     template_name = 'analytics/page/all.html'
+    last_days = 30
 
     def dispatch(self, request, *args, **kwargs):
         user_obj = request.user
@@ -138,21 +139,26 @@ class AllPageView(LoginRequiredMixin, ListView):
                     selected_fbad_acc.save()
                 created_time = datetime.datetime.now() - datetime.timedelta(minutes=settings.API_REQUEST_EXPIRE_TIME)
                 ins_data_obj = InsightData.objects.filter(ad_acc=selected_fbad_acc, created_at__gte=created_time)
-                if ins_data_obj.exists():
-                    non_expired_data = ins_data_obj.latest()
+                last_days = request.GET.get('last_days')
+                if last_days:
+                    self.last_days = int(last_days)
+                if ins_data_obj.exists() and ins_data_obj.filter(days_count=self.last_days).exists():
+                    non_expired_data = ins_data_obj.filter(days_count=self.last_days).latest()
                 else:
                     today = datetime.date.today()
-                    month_ago = today - datetime.timedelta(days=30)
-                    ad_insight_data = selected_fbad_acc.get_insight_data(month_ago, today)
+                    days_ago = today - datetime.timedelta(days=self.last_days)
+                    ad_insight_data = selected_fbad_acc.get_insight_data(days_ago, today)
                     non_expired_data = InsightData.objects.create(
                         ad_acc=selected_fbad_acc,
                         data=ad_insight_data,
+                        days_count=self.last_days,
                     )
 
                 self.extra_context.update({
                     "ad_accounts": fbad_accounts,
                     "selected_ad_acc": selected_fbad_acc,
-                    "ad_data": non_expired_data.data
+                    "ad_data": non_expired_data.data,
+                    "last_days": self.last_days,
                 })
             else:
                 ap = ApiParser(user_obj.get_access_token())

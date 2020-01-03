@@ -39,6 +39,7 @@ class InsightData(models.Model):
         verbose_name=_("Ad Account"),
     )
     data = JSONField()
+    days_count = models.IntegerField(default=30)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

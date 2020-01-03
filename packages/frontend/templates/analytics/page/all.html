@@ -19,24 +19,31 @@
                 <a href="?pdf=true" target="_blank" class="btn btn-success btn-sm">Generate pdf report</a>
                 <a href="?pdf=true&download=true" target="_blank" class="btn btn-success btn-sm">Download pdf report</a>
             </div>
-            {% comment %}
+            <hr>
+            <form method="get" class="row">
+                <div class="input-group mb-3 col-lg-3 col-md-6">
+                    <select class="custom-select" name="last_days">
+                        <option selected disabled>Select days</option>
+                        <option value="1">Today</option>
+                        <option value="7">Last 7 days</option>
+                        <option value="30">Last month</option>
+                    </select>
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary" type="submit">Submit</button>
+                    </div>
+                </div>
+            </form>
             {% if ad_data %}
+                <hr>
                 <div>
-                    <p>Ad data: (for test / 30 days before from today)</p>
-                    <ul>
-                        {% for key, val in ad_data.items %}
-                            {% if val != '' %}
-                                <li><b>{{ key }}</b>: {{ val }}</li>
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
+                    <p>Total spend (last {{ last_days }} days): {{ ad_data.spend }} {{ ad_data.account_currency|lower }}</p>
                 </div>
             {% endif %}
-            {% endcomment %}
+            
         </div>
     {% endif %}
     <div class="d-flex flex-column">
-        <h2 class="mx-auto mb-4" style="margin-top: 10%">Campaign (last 30 days):</h2>
+        <h2 class="mx-auto mb-4" style="margin-top: 10%">Campaign (last {{ last_days }} days):</h2>
         <div class="d-flex justify-content-center flex-column text-center">
             <div class="row w-100">
                 {% for pg in object_list %}
@@ -49,12 +56,12 @@
                                 </a>
                             </div>
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item">Visitors: {{ pg.get_visit_count_by_day }}</li>
-                                <li class="list-group-item">Bounce rate: {{ pg.get_bounce_rate_by_day }}</li>
+                                <li class="list-group-item">Visitors: {% get_visit_count_by_day pg last_days %}</li>
+                                <li class="list-group-item">Bounce rate: {% get_bounce_rate_by_day pg last_days %}</li>
                                 {% if not forloop.last and ad_data.spend %}
-                                    <li class="list-group-item">CPC:  {% get_cpc pg ad_data.spend pg.get_visit_count_by_day %} {{ ad_data.account_currency }}</li>
+                                    <li class="list-group-item">CPC:  {% get_cpc pg ad_data.spend last_days %} {{ ad_data.account_currency }}</li>
                                 {% elif forloop.last and ad_data.spend %}
-                                    <li class="list-group-item">CPA:  {% get_cpc pg ad_data.spend pg.get_visit_count_by_day %} {{ ad_data.account_currency }}</li>
+                                    <li class="list-group-item">CPA:  {% get_cpc pg ad_data.spend last_days %} {{ ad_data.account_currency }}</li>
                                 {% endif %}
                             </ul>
                         </div>

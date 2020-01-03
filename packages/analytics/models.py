@@ -72,8 +72,8 @@ class Page(models.Model):
             next_page = pg
         if next_page is None:
             return "-"  # no bounce rate for last page
-        next_page_visit = next_page.pagevisit_set.count()
-        this_page_visit = self.pagevisit_set.count()
+        next_page_visit = next_page.get_visit_count_by_day(day)
+        this_page_visit = self.get_visit_count_by_day(day)
 
         if this_page_visit < next_page_visit:
             return '100%'
